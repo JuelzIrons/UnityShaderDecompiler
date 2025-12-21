@@ -10,7 +10,7 @@ using USCSandbox.Extras;
 
 namespace USCSandbox.Processor
 {
-    internal class ShaderProcessor
+    public class ShaderProcessor
     {
         private AssetTypeValueField _shaderBf;
         private GPUPlatform _platformId;
@@ -88,7 +88,8 @@ namespace USCSandbox.Processor
         private void WritePassBody(
             BlobManager blobManager,
             List<ShaderProgramBasket> baskets,
-            int depth)
+            int depth,
+            string passName)
         {
             _sb.AppendLine("CGPROGRAM");
 
@@ -255,7 +256,7 @@ namespace USCSandbox.Processor
                 
                     structSb.AppendLine();
                     structSb.Append(new string(' ', depth * 4));
-                    structSb.Append($"#{preprocessorDirective} {string.Join(" && ", keywords)}");
+                    structSb.Append($"#{preprocessorDirective} {string.Join(" && ", keywords)} // {passName}:{programType}");
                 }
                 
                 cbufferSb.Append(new string(' ', depth * 4));
@@ -570,6 +571,8 @@ namespace USCSandbox.Processor
                 _sb.AppendLine("Pass {");
                 _sb.Indent();
                 {
+                    var passName = pass["m_State"]["m_Name"].AsString;
+                    
                     WritePassState(pass["m_State"]);
 
                     var nameTable = pass["m_NameIndices.Array"]
@@ -595,7 +598,7 @@ namespace USCSandbox.Processor
                             fragInfo.ParameterBlobIndices.Count > 0 ? (int)fragInfo.ParameterBlobIndices[i] : -1));
                     }
                     if (baskets.Count > 0)
-                        WritePassBody(blobManager, baskets, _sb.GetIndent());
+                        WritePassBody(blobManager, baskets, _sb.GetIndent(), passName);
                 }
                 _sb.Unindent();
                 _sb.AppendLine("}");
