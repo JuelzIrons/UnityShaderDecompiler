@@ -7,10 +7,10 @@ The only reason this exists is because im reverse engineering a android game and
 ## INFO
 
 Supported shader backends:
-- **Vulkan (SPIR-V)** — Primary target, reason I forked this.
-- **DirectX (DXBC/DXIL)** — decently well supported
-- **OpenGL ES 3 (GLES3)** — supported
-- **Switch NVN** — work in progress, not fully functional
+- **Vulkan (SPIR-V)** - Primary target, reason I forked this.
+- **DirectX (DXBC/DXIL)** - decently well supported
+- **OpenGL ES 3 (GLES3)** - supported
+- **Switch NVN** - work in progress, not fully functional
 
 ## How to use
 
@@ -25,14 +25,14 @@ USCSandbox.exe --dir <bundle directory> [--out <output directory>] [--platform <
 ```
 
 **Arguments:**
-- `[bundle path]` — path to a `.bundle` file, or `null` for a bare `.assets` file
-- `[assets path]` — name of the assets file inside the bundle (e.g. `CAB-abcdef0123456789`)
-- `[shader path id]` — path ID of a specific shader asset
-- `--all` — decompile all shaders instead of a single one
-- `--platform` — target GPU platform: `d3d11`, `gles3`, `vulkan`, `Switch` (default: `gles3` in interactive, `d3d11` in CLI)
-- `--version` — override the Unity version (required if the bundle has a stripped version)
-- `--dir` — recursively scan a directory and decompile all shaders from all asset bundles found
-- `--out` — output directory for exported shaders (default: `./Shaders`)
+- `[bundle path]` - path to a `.bundle` file, or `null` for a bare `.assets` file
+- `[assets path]` - name of the assets file inside the bundle (e.g. `CAB-abcdef0123456789`)
+- `[shader path id]` - path ID of a specific shader asset
+- `--all` - decompile all shaders instead of a single one
+- `--platform` - target GPU platform: `d3d11`, `gles3`, `vulkan`, `Switch` (default: `gles3` in interactive, `d3d11` in CLI)
+- `--version` - override the Unity version (required if the bundle has a stripped version)
+- `--dir` - recursively scan a directory and decompile all shaders from all asset bundles found
+- `--out` - output directory for exported shaders (default: `./Shaders`)
 
 ## How it works
 
@@ -40,9 +40,9 @@ A Unity shader asset has two major parts: serialized metadata (the `m_ParsedForm
 
 The decompiler pairs up metadata and blob data into "shader baskets", then converts the platform bytecode into USIL (Ultra Shader Intermediate Language) using a per-platform converter (`DirectXProgramToUSIL`, `NvnProgramToUSIL`, etc.). USIL is then processed in three passes:
 
-- **Fixers** — required corrections for accurate decompilation
-- **Metadders** — inject metadata from outside the native shader format (constant buffer names, input/output semantics, etc.)
-- **Optimizers** — optional cleanup for readability (loop reconstruction, matrix multiply detection, etc.)
+- **Fixers** - required corrections for accurate decompilation
+- **Metadders** - inject metadata from outside the native shader format (constant buffer names, input/output semantics, etc.)
+- **Optimizers** - optional cleanup for readability (loop reconstruction, matrix multiply detection, etc.)
 
 Finally, `UShaderFunctionToHLSL` converts the processed USIL to an HLSL function body, and the metadata parsers reconstruct the surrounding ShaderLab structure.
 
