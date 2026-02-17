@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssetRipper.Primitives" Version="3.2.0" />
+    <PackageReference Include="AssetsTools.NET" Version="3.0.2" />
+    <Reference Include="MsgPack">
+      <HintPath>..\Libs\MsgPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Ryujinx.Common">
+      <HintPath>..\Libs\Ryujinx.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ryujinx.Graphics.Shader">
+      <HintPath>..\Libs\Ryujinx.Graphics.Shader.dll</HintPath>
+    </Reference>
+    <Reference Include="Ryujinx.ShaderTools">
+      <HintPath>..\Libs\Ryujinx.ShaderTools.dll</HintPath>
+    </Reference>
+    <Reference Include="Spv.Generator">
+      <HintPath>..\Libs\Spv.Generator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="USCAfterBuild" AfterTargets="AfterBuild" Condition="'$(SolutionDir)' != '*Undefined*'">
+    <ItemGroup>
+      <Files Include="$(SolutionDir)Files\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Files)" DestinationFolder="$(OutputPath)" ContinueOnError="true" />
+    <MakeDir Directories="$(OutputPath)plugins" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="USCAfterPublish" AfterTargets="Publish" Condition="'$(SolutionDir)' != '*Undefined*'">
+    <ItemGroup>
+      <Files Include="$(SolutionDir)Files\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Files)" DestinationFolder="$(PublishDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(PublishDir)plugins" ContinueOnError="true" />
+  </Target>
+
+</Project>
