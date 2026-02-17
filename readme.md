@@ -47,6 +47,8 @@ The decompiler pairs up metadata and blob data into "shader baskets", then conve
 Finally, `UShaderFunctionToHLSL` converts the processed USIL to an HLSL function body, and the metadata parsers reconstruct the surrounding ShaderLab structure.
 
 ---
+Licence: GPLv3
+
 
 ## Credits
 
