@@ -50,7 +50,7 @@ Finally, `UShaderFunctionToHLSL` converts the processed USIL to an HLSL function
 
 ## Credits
 
-- **Juelz Irons** - 
+- **Juelz Irons** - Implementing Vulkan (SPIR-V) support
 - **nesrak1** - original USCSandbox and USC rework
 - **ds5678** - AssetRipper stuff
 - **uTinyRipper** - base Unity shader parsing
