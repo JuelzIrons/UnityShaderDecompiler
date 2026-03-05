@@ -1,46 +1,57 @@
-﻿using AssetRipper.Primitives;
-using AssetsTools.NET;
+﻿using AssetsTools.NET;
+using USCSandbox.ShaderMetadata;
+using UnityVersion = AssetRipper.Primitives.UnityVersion;
 
-namespace USCSandbox.Processor
+namespace USCSandbox.Processor;
+
+public class BlobManager
 {
-    public class BlobManager
+    private AssetsFileReader[] _readers;
+    private UnityVersion _engVer;
+
+    public List<BlobEntry> Entries;
+
+    public BlobManager(byte[][] blobs, UnityVersion engVer)
     {
-        private AssetsFileReader _reader;
-        private UnityVersion _engVer;
-
-        public List<BlobEntry> Entries;
-
-        public BlobManager(byte[] blob, UnityVersion engVer)
+        _readers = new AssetsFileReader[blobs.Length];
+        for (var i = 0; i < blobs.Length; i++)
         {
-            _reader = new AssetsFileReader(new MemoryStream(blob));
-            _engVer = engVer;
-
-            var count = _reader.ReadInt32();
-            Entries = new List<BlobEntry>(count);
-            for (var i = 0; i < count; i++)
-            {
-                Entries.Add(new BlobEntry(_reader, engVer));
-            }
+            _readers[i] = new AssetsFileReader(new MemoryStream(blobs[i]));
         }
 
-        public byte[] GetRawEntry(int index)
-        {
-            _reader.BaseStream.Position = Entries[index].Offset;
-            return _reader.ReadBytes(Entries[index].Length);
-        }
+        _engVer = engVer;
 
-        public ShaderParams GetShaderParams(int index)
+        var tableReader = _readers[0];
+        var count = tableReader.ReadInt32();
+        Entries = new List<BlobEntry>(count);
+        for (var i = 0; i < count; i++)
         {
-            var blobEntry = GetRawEntry(index);
-            var r = new AssetsFileReader(new MemoryStream(blobEntry));
-            return new ShaderParams(r, _engVer, true);
+            Entries.Add(new BlobEntry(tableReader, engVer));
         }
+    }
 
-        public ShaderSubProgram GetShaderSubProgram(int index)
-        {
-            var blobEntry = GetRawEntry(index);
-            var r = new AssetsFileReader(new MemoryStream(blobEntry));
-            return new ShaderSubProgram(r, _engVer);
-        }
+    public byte[] GetRawEntry(int index)
+    {
+        var entry = Entries[index];
+        AssetsFileReader reader = entry.Segment == -1
+            ? _readers[0]
+            : _readers[entry.Segment];
+
+        reader.BaseStream.Position = entry.Offset;
+        return reader.ReadBytes(entry.Length);
+    }
+
+    public ShaderParameters GetShaderParams(int index)
+    {
+        var blobEntry = GetRawEntry(index);
+        var r = new AssetsFileReader(new MemoryStream(blobEntry));
+        return new ShaderParameters(r, _engVer, true);
+    }
+
+    public ShaderSubProgramData GetShaderSubProgram(int index)
+    {
+        var blobEntry = GetRawEntry(index);
+        var r = new AssetsFileReader(new MemoryStream(blobEntry));
+        return new ShaderSubProgramData(r, _engVer);
     }
 }
