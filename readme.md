@@ -4,6 +4,8 @@ A fork of [nesrak1/USCSandbox (rework branch)](https://github.com/nesrak1/USCSan
 
 The only reason this exists is because im reverse engineering a android game and couldnt get the shader accurate to the real game 
 
+Warning: These shaders will very likely not compile in editor, you may have to fix a few things. this program isnt flawless
+
 ## INFO
 
 Supported shader backends:
