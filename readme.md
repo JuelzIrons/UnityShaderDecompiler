@@ -4,9 +4,10 @@ A fork of [nesrak1/USCSandbox (rework branch)](https://github.com/nesrak1/USCSan
 
 The only reason this exists is because im reverse engineering a android game and couldnt get the shader accurate to the real game 
 
-Warning: These shaders will very likely not compile in editor, you may have to fix a few things. this program isnt flawless
-
-if compiling yourself you need to put [spirv-cross](https://github.com/KhronosGroup/SPIRV-Cross) in the build folder
+READ THIS: 
+These shaders **WILL NOT** compile in editor, this is just for reference to make a accurate shader based off the decompiled code.
+There is no shader decompiler that will give you accurate, compilable hlsl to use in editor
+If compiling yourself you need to put [spirv-cross](https://github.com/KhronosGroup/SPIRV-Cross) in the build folder
 
 ## INFO
 
@@ -19,11 +20,9 @@ Supported shader backends:
 ## How to use
 
 ### Interactive mode (recommended)
-
 Just run the executable by double-clicking it or launching it from a terminal with no arguments. You will be prompted to enter the path to a folder containing asset bundles, then choose a platform. The tool will scan the entire directory recursively, decompile every shader found, and write the results to a `Shaders/` folder next to the executable.
 
 ### Command line
-
 ```
 USCSandbox.exe --dir <bundle directory> [--out <output directory>] [--platform <platform>] [--version <unity version>]
 ```
