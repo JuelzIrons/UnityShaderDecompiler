@@ -6,6 +6,8 @@ The only reason this exists is because im reverse engineering a android game and
 
 Warning: These shaders will very likely not compile in editor, you may have to fix a few things. this program isnt flawless
 
+if compiling yourself you need to put [spirv-cross](https://github.com/KhronosGroup/SPIRV-Cross) in the build folder
+
 ## INFO
 
 Supported shader backends:
