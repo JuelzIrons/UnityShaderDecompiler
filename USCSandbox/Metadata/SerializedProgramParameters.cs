@@ -1,8 +1,8 @@
 ﻿using AssetsTools.NET;
 
 namespace USCSandbox.Metadata;
-// this class appears in the serialized asset data.
-// for the data that appears after the base shader in a shader blob, see ShaderParameters.
+
+
 public class SerializedProgramParameters
 {
     public List<int> Vectors;
@@ -16,7 +16,7 @@ public class SerializedProgramParameters
 
     public SerializedProgramParameters(AssetTypeValueField field, Dictionary<int, string> nameTable)
     {
-        // this will error out if we hit any unsupported fields (.AsInt ones) since none will be int
+        
         Vectors = SerializedMetadataHelpers.GetArrayFirstValue(field["m_VectorParams.Array"])
             .Select(p => p.AsInt).ToList();
         Matrices = SerializedMetadataHelpers.GetArrayFirstValue(field["m_MatrixParams.Array"])

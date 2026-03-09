@@ -20,7 +20,7 @@ public class UsilCBufferMetadder : IUsilOptimizer
                 UseMetadata(operand, shaderParams);
             }
         }
-        return true; // any changes made?
+        return true; 
     }
 
     private static void UseMetadata(UsilOperand operand, ShaderParameters shaderParams)
@@ -44,10 +44,10 @@ public class UsilCBufferMetadder : IUsilOptimizer
             ConstantBufferBinding? binding = shaderParams.ConstBindings.FirstOrDefault(b => b.Index == cbRegIdx);
             if (binding == null)
             {
-                // Fallback. Might work? But probably not reliable.
+                
                 if (cbRegIdx < 0 || cbRegIdx >= shaderParams.ConstantBuffers.Count)
                 {
-                    // I know I know... hopefully we have at least one cbuf
+                    
                     constantBuffer = shaderParams.ConstantBuffers[0];
                 }
                 else
@@ -60,7 +60,7 @@ public class UsilCBufferMetadder : IUsilOptimizer
                 constantBuffer = shaderParams.ConstantBuffers.First(b => b.Name == binding.Name);
             }
 
-            // Search children fields
+            
             foreach (ConstantBufferParameter param in constantBuffer.CBParams)
             {
                 int paramCbStart = param.Index;
@@ -91,7 +91,7 @@ public class UsilCBufferMetadder : IUsilOptimizer
                 }
             }
 
-            // Search children structs and its fields
+            
             foreach (StructParameter stParam in constantBuffer.StructParams)
             {
                 foreach (ConstantBufferParameter cbParam in stParam.CBParams)
@@ -117,7 +117,7 @@ public class UsilCBufferMetadder : IUsilOptimizer
                 }
             }
 
-            // Multiple params got opto'd into one operation
+            
             if (cbParams.Count > 1)
             {
                 operand.OperandType = UsilOperandType.Multiple;
@@ -130,7 +130,7 @@ public class UsilCBufferMetadder : IUsilOptimizer
                     UsilOperand childOperand = new UsilOperand();
                     childOperand.OperandType = UsilOperandType.ConstantBuffer;
 
-                    // apparently switch has column long, whereas directx has row long
+                    
                     int maxRowOrColumnLength = Math.Max(param.Rows, param.Columns);
 
                     childOperand.Mask = MatchMaskToConstantBuffer(operand.Mask, param.Index, maxRowOrColumnLength);
@@ -149,14 +149,14 @@ public class UsilCBufferMetadder : IUsilOptimizer
 
                 operand.ArrayIndex -= param.Index / 16;
 
-                // apparently switch has column long, whereas directx has row long
+                
                 int maxRowOrColumnLength = Math.Max(param.Rows, param.Columns);
 
                 if (param.IsMatrix)
                 {
                     if (param.ArraySize > 0)
                     {
-                        // example of 4x4 matrix: matrix[5] -> matrix[1][1] (matrix[1]._m01._m11._m21._m31)
+                        
                         operand.ArrayRelative = new UsilOperand(operand.ArrayIndex / maxRowOrColumnLength);
                         operand.ArrayIndex %= maxRowOrColumnLength;
                     }

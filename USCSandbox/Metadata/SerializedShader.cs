@@ -20,8 +20,8 @@ public class SerializedShader
     public byte[] CompressedBlob;
     public List<SerializedSubShader> SubShaders;
 
-    // not parsing this here for now since it'll only
-    // be used once during shader file write time
+    
+    
     public AssetTypeValueField PropsField => _shaderBf["m_ParsedForm"]["m_PropInfo"]["m_Props.Array"];
 
     public SerializedShader(AssetTypeValueField shaderBf, UnityVersion engVer)

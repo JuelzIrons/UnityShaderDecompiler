@@ -2,12 +2,12 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Fixers;
-/// <summary>
-/// Corrects the sampler type for built in types
-/// </summary>
+
+
+
 public class USILSamplerTypeFixer : IUsilOptimizer
 {
-    // There's most likely a better way to handle this, but I don't care right now.
+    
     public static readonly HashSet<string?> BUILTIN_SAMPLER_TEXTURE_NAMES = new()
     {
         "unity_Lightmap",
@@ -28,13 +28,13 @@ public class USILSamplerTypeFixer : IUsilOptimizer
             {
                 UsilOperand sampleOperand = instruction.SrcOperands[2];
 
-                // USILSamplerMetadder couldn't find sampler metadata, skip
+                
                 if (sampleOperand.OperandType == UsilOperandType.SamplerRegister)
                 {
                     break;
                 }
 
-                // Shouldn't happen, but just in case
+                
                 if (!sampleOperand.MetadataNameAssigned)
                 {
                     break;
@@ -51,7 +51,7 @@ public class USILSamplerTypeFixer : IUsilOptimizer
                 }
             }
         }
-        return changes; // any changes made?
+        return changes; 
     }
 
     private static int GetSamplerTypeIdx(UsilInstructionType type)

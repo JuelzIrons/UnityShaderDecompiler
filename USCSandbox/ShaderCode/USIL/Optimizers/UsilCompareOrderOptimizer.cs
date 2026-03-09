@@ -2,9 +2,9 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Optimizers;
-/// <summary>
-/// Moves constant values to the right in comparison instructions
-/// </summary>
+
+
+
 public class UsilCompareOrderOptimizer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -29,7 +29,7 @@ public class UsilCompareOrderOptimizer : IUsilOptimizer
                 }
             }
         }
-        return changes; // any changes made?
+        return changes; 
     }
 
     private static bool IsOperandFullyConstant(UsilOperand operand)

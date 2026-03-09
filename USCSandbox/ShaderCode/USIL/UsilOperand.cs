@@ -232,13 +232,13 @@ public class UsilOperand
                 {
                     if (ImmFloat.Length == 1)
                     {
-                        // todo: check if number can't possibly be expressed as float and write in hex.
-                        // todo: float precision isn't correct atm. add precision check somewhere.
+                        
+                        
                         body = $"{ImmFloat[0].ToString("0.0#######", CultureInfo.InvariantCulture)}";
                     }
                     else
                     {
-                        // todo: if all numbers are the same and it matches the mask, use it only once
+                        
                         body += $"float{ImmFloat.Length}(";
                         for (int i = 0; i < ImmFloat.Length; i++)
                         {

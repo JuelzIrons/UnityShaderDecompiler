@@ -49,7 +49,6 @@ public class ShaderTextWriter
 
     private void WriteProperties(AssetTypeValueField props)
     {
-        // todo: convert this to an object (maybe?)
         _sb.AppendLine("Properties {");
         _sb.Indent();
         foreach (var prop in props)
@@ -75,7 +74,6 @@ public class ShaderTextWriter
                 _sb.AppendNoIndent("[HDR] ");
             if (flags.HasFlag(SerializedPropertyFlag.Gamma))
                 _sb.AppendNoIndent("[Gamma] ");
-            // any more?
 
             var name = prop["m_Name"].AsString;
             var description = prop["m_Description"].AsString;
@@ -181,7 +179,6 @@ public class ShaderTextWriter
             {
                 if (shaderParams != null)
                 {
-                    //_sb.Append(new string(' ', _sb.GetIndent() * 4));
                     _sb.AppendLine($"// CBs for {platformId}");
 
                     foreach (ConstantBuffer cbuffer in shaderParams.ConstantBuffers)
@@ -189,7 +186,6 @@ public class ShaderTextWriter
                         _sb.AppendNoIndent(WritePassCBuffer(shaderParams, [], cbuffer, _sb.GetIndent()));
                     }
 
-                    //_sb.Append(new string(' ', _sb.GetIndent() * 4));
                     _sb.AppendLine($"// Textures for {platformId}");
 
                     _sb.AppendNoIndent(WritePassTextures(shaderParams, [], _sb.GetIndent()));
@@ -254,38 +250,22 @@ public class ShaderTextWriter
                     _sb.AppendLine("");
                 }
             }
+            else if (platformId == GPUPlatform.metal)
+            {
+                var metalSubPrograms = MetalShaderConverter.Convert(pass, blobMan, _engVer);
+                foreach (var subProg in metalSubPrograms)
+                {
+                    WriteParams(subProg.Parameters);
 
-            //
-
-
-            // skipping other programs at this time
-            //SerializedProgram vertInfo, fragInfo;
-            //foreach (var prog in pass.Programs)
-            //{
-            //    if (prog.Name == "progVertex")
-            //        vertInfo = prog;
-            //    else if (prog.Name == "progFragment")
-            //        fragInfo = prog;
-            //}
-
-            //var vertProgInfos = vertInfo.GetForPlatform((int)GetVertexProgramForPlatform(_platformId));
-            //var fragProgInfos = fragInfo.GetForPlatform((int)GetFragmentProgramForPlatform(_platformId));
-
-            //// we should hopefully only have one of each type, but just in case...
-            //// todo: cleanup
-            //List<ShaderProgramBasket> baskets = [];
-            //for (var i = 0; i < vertProgInfos.Count; i++)
-            //{
-            //    baskets.Add(new ShaderProgramBasket(vertInfo, vertProgInfos[i],
-            //        vertInfo.ParameterBlobIndices.Count > 0 ? (int)vertInfo.ParameterBlobIndices[i] : -1));
-            //}
-            //for (var i = 0; i < fragProgInfos.Count; i++)
-            //{
-            //    baskets.Add(new ShaderProgramBasket(fragInfo, fragProgInfos[i],
-            //        fragInfo.ParameterBlobIndices.Count > 0 ? (int)fragInfo.ParameterBlobIndices[i] : -1));
-            //}
-            //if (baskets.Count > 0)
-            //    WritePassBody(blobManager, baskets, _sb.GetIndent());
+                    _sb.AppendLine($"// Keywords: {string.Join(" && ", subProg.Keywords)}");
+                    _sb.AppendLine($"// Platform: {subProg.FunctionType}");
+                    _sb.AppendLine("/* MSL Source:");
+                    _sb.AppendNoIndent(subProg.MslSource);
+                    _sb.AppendLine("");
+                    _sb.AppendLine("*/");
+                    _sb.AppendLine("");
+                }
+            }
         }
         _sb.Unindent();
         _sb.AppendLine("}");
@@ -308,7 +288,6 @@ public class ShaderTextWriter
             WritePassRtBlend(state.RtBlendState[i], index);
         }
 
-        // AlphaToMask
         if (state.AlphaToMask.IsPropertyRef || state.AlphaToMask.Value > 0f)
         {
             _sb.AppendLine(state.AlphaToMask.IsPropertyRef
@@ -316,42 +295,34 @@ public class ShaderTextWriter
                 : "AlphaToMask On");
         }
 
-        // ZClip - default is On, only emit when Off or property ref
         if (state.ZClip.IsPropertyRef || state.ZClip.Value != ZClip.On)
         {
             _sb.AppendLine($"ZClip {state.ZClip.ToShaderLab()}");
         }
 
-        // ZTest - default is LEqual, skip if LEqual/None and no property ref
         if (state.ZTest.IsPropertyRef
             || (state.ZTest.Value != ZTest.None && state.ZTest.Value != ZTest.LEqual))
         {
             _sb.AppendLine($"ZTest {state.ZTest.ToShaderLab()}");
         }
 
-        // ZWrite - default is On
         if (state.ZWrite.IsPropertyRef || state.ZWrite.Value != ZWrite.On)
         {
             _sb.AppendLine($"ZWrite {state.ZWrite.ToShaderLab()}");
         }
 
-        // Cull - default is Back
         if (state.Culling.IsPropertyRef || state.Culling.Value != CullMode.Back)
         {
             _sb.AppendLine($"Cull {state.Culling.ToShaderLab()}");
         }
 
-        // Offset
         if (state.OffsetFactor.IsPropertyRef || state.OffsetUnits.IsPropertyRef
             || state.OffsetFactor.Value != 0f || state.OffsetUnits.Value != 0f)
         {
             _sb.AppendLine($"Offset {state.OffsetFactor.ToShaderLab()}, {state.OffsetUnits.ToShaderLab()}");
         }
 
-        // Stencil
         WritePassStencil(state);
-
-        // Fog
         var fogMode = state.FogMode;
         var fogColorX = state.FogColor.X.Value;
         var fogColorY = state.FogColor.Y.Value;
@@ -463,7 +434,6 @@ public class ShaderTextWriter
         if (stencilWriteMask.IsPropertyRef || stencilWriteMask.Value != 255.0)
             _sb.AppendLine($"WriteMask {stencilWriteMask.ToShaderLabInt()}");
 
-        // Generic stencil ops
         if (HasAnyPropertyRef(stOp.Pass, stOp.Fail, stOp.ZFail) || HasAnyPropertyRef(stOp.Comp)
             || stOp.Pass.Value != StencilOp.Keep || stOp.Fail.Value != StencilOp.Keep
             || stOp.ZFail.Value != StencilOp.Keep
@@ -475,7 +445,6 @@ public class ShaderTextWriter
             _sb.AppendLine($"ZFail {stOp.ZFail.ToShaderLab()}");
         }
 
-        // Front face stencil ops
         if (HasAnyPropertyRef(stFront.Pass, stFront.Fail, stFront.ZFail) || HasAnyPropertyRef(stFront.Comp)
             || stFront.Pass.Value != StencilOp.Keep || stFront.Fail.Value != StencilOp.Keep
             || stFront.ZFail.Value != StencilOp.Keep
@@ -487,7 +456,6 @@ public class ShaderTextWriter
             _sb.AppendLine($"ZFailFront {stFront.ZFail.ToShaderLab()}");
         }
 
-        // Back face stencil ops
         if (HasAnyPropertyRef(stBack.Pass, stBack.Fail, stBack.ZFail) || HasAnyPropertyRef(stBack.Comp)
             || stBack.Pass.Value != StencilOp.Keep || stBack.Fail.Value != StencilOp.Keep
             || stBack.ZFail.Value != StencilOp.Keep
@@ -515,14 +483,12 @@ public class ShaderTextWriter
 
         string idxStr = index != -1 ? $"{index} " : "";
 
-        // Blend
         bool hasBlendRef = HasAnyPropertyRef(srcBlend, destBlend, srcBlendAlpha, destBlendAlpha);
         bool hasNonDefaultBlend = srcBlend.Value != BlendMode.One || destBlend.Value != BlendMode.Zero
             || srcBlendAlpha.Value != BlendMode.One || destBlendAlpha.Value != BlendMode.Zero;
 
         if (hasBlendRef || hasNonDefaultBlend)
         {
-            // Check if alpha blend differs from color blend (by name or value)
             bool alphaDiffersFromColor =
                 srcBlendAlpha.ToShaderLab() != srcBlend.ToShaderLab()
                 || destBlendAlpha.ToShaderLab() != destBlend.ToShaderLab();
@@ -536,7 +502,6 @@ public class ShaderTextWriter
             _sb.AppendNoIndent("\n");
         }
 
-        // BlendOp
         bool hasBlendOpRef = HasAnyPropertyRef(blendOp, blendOpAlpha);
         bool hasNonDefaultBlendOp = blendOp.Value != BlendOp.Add || blendOpAlpha.Value != BlendOp.Add;
 
@@ -551,7 +516,6 @@ public class ShaderTextWriter
             _sb.AppendNoIndent("\n");
         }
 
-        // ColorMask
         if (colMask.IsPropertyRef)
         {
             _sb.Append("");
@@ -585,7 +549,6 @@ public class ShaderTextWriter
         }
     }
 
-    // todo: REPLACE
     private string WritePassCBuffer(
         ShaderParameters shaderParams, HashSet<string> declaredCBufs,
         ConstantBuffer? cbuffer, int depth)
@@ -605,7 +568,6 @@ public class ShaderTextWriter
                 string typeName = HlslNamingUtils.GetConstantBufferParamTypeName(param);
                 string name = param.ParamName;
 
-                // skip things like unity_MatrixVP if they show up in $Globals
                 if (UnityShaderConstants.INCLUDED_UNITY_PROP_NAMES.Contains(name))
                 {
                     continue;
@@ -613,7 +575,7 @@ public class ShaderTextWriter
 
                 if (!wroteCbufferHeaderYet && nonGlobalCbuffer)
                 {
-                    sb.Append(new string(' ', depth * 4)); // todo: new stringbuilder
+                    sb.Append(new string(' ', depth * 4));
                     sb.AppendLine($"// CBUFFER_START({cbuffer.Name}) // {cbufferIndex}");
                     depth++;
                 }
@@ -648,9 +610,6 @@ public class ShaderTextWriter
         }
         return sb.ToString();
     }
-
-    // todo: REPLACE
-
 
     private string WritePassTextures(
         ShaderParameters shaderParams, HashSet<string> declaredCBufs, int depth)

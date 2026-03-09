@@ -1,6 +1,6 @@
 ﻿namespace USCSandbox.ShaderCode.Converters.DirectXDisassembler
 {
-    //tokens.h
+    
     public enum Opcode
     {
         add,
@@ -422,7 +422,7 @@
         Continued,
         Unused
     }
-    public enum SysValueType //
+    public enum SysValueType 
     {
         none,
         pos,

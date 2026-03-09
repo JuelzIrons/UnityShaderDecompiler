@@ -1,112 +1,112 @@
 ﻿namespace USCSandbox.ShaderCode.USIL;
 public enum UsilInstructionType
 {
-    // math
-    Move, //dx: mov
-    MoveConditional, //dx: movc
-    Add, //dx: add/iadd
-    Subtract, //dx: --- (add/iadd)
-    Multiply, //dx: mul/imul
-    Divide, //dx: div
-    MultiplyAdd, //dx: mad
+    
+    Move, 
+    MoveConditional, 
+    Add, 
+    Subtract, 
+    Multiply, 
+    Divide, 
+    MultiplyAdd, 
 
-    And, //dx: and
-    Or, //dx: or
-    Xor, //dx: xor
-    Not, //dx: not
+    And, 
+    Or, 
+    Xor, 
+    Not, 
 
-    ShiftLeft, //dx: ishl
-    ShiftRight, //dx: ishr
+    ShiftLeft, 
+    ShiftRight, 
 
-    Floor, //dx: round_ni
-    Ceiling, //dx: round_pi
-    Round, //dx: round_ne
-    Truncate, //dx: round_z
-    IntToFloat, //dx: itof
-    UIntToFloat, //dx: utof
-    FloatToInt, //dx: ftoi
-    FloatToUInt, //dx: ftou
-    Negate, //dx: --- (mul,ineg), ryu: Negate
-    Clamp, //dx: ---, ryu: Clamp
-    ClampUInt, //dx: ---, ryu: ClampU32
+    Floor, 
+    Ceiling, 
+    Round, 
+    Truncate, 
+    IntToFloat, 
+    UIntToFloat, 
+    FloatToInt, 
+    FloatToUInt, 
+    Negate, 
+    Clamp, 
+    ClampUInt, 
 
-    Minimum, //dx: min
-    Maximum, //dx: max
+    Minimum, 
+    Maximum, 
 
-    SquareRoot, //dx: sqrt
-    SquareRootReciprocal, //dx: rsq
+    SquareRoot, 
+    SquareRootReciprocal, 
 
-    ToThePower, //dx: --- (exp)
-    Logarithm2, //dx: log
+    ToThePower, 
+    Logarithm2, 
 
-    Sine, //dx: --- (sincos)
-    Cosine, //dx: --- (sincos)
+    Sine, 
+    Cosine, 
 
-    DotProduct2, //dx: dp2
-    DotProduct3, //dx: dp3
-    DotProduct4, //dx: dp4
+    DotProduct2, 
+    DotProduct3, 
+    DotProduct4, 
 
-    Reciprocal, //dx: rcp
-    Fractional, //dx: frc
+    Reciprocal, 
+    Fractional, 
 
-    ResourceDimensionInfo, //dx: resinfo
-    SampleCountInfo, //dx: sampleinfo
+    ResourceDimensionInfo, 
+    SampleCountInfo, 
 
-    // probably should be an argument
-    DerivativeRenderTargetX, //dx: deriv_rtx
-    DerivativeRenderTargetY, //dy: deriv_rty
-    DerivativeRenderTargetXCoarse, //dx: deriv_rtx_coarse
-    DerivativeRenderTargetYCoarse, //dx: deriv_rtx_coarse
-    DerivativeRenderTargetXFine, //dy: deriv_rty_fine
-    DerivativeRenderTargetYFine, //dy: deriv_rty_fine
+    
+    DerivativeRenderTargetX, 
+    DerivativeRenderTargetY, 
+    DerivativeRenderTargetXCoarse, 
+    DerivativeRenderTargetYCoarse, 
+    DerivativeRenderTargetXFine, 
+    DerivativeRenderTargetYFine, 
 
-    // comparisons
-    Equal, //dx: eq
-    NotEqual, //dx: ne
-    GreaterThan, //dx: --- (ge/lt)
-    GreaterThanOrEqual, //dx: ge
-    LessThan, //dx: lt
-    LessThanOrEqual, //dx: --- (ge/lt)
+    
+    Equal, 
+    NotEqual, 
+    GreaterThan, 
+    GreaterThanOrEqual, 
+    LessThan, 
+    LessThanOrEqual, 
 
-    // branching
-    IfTrue, //dx: if(_z)
-    IfFalse, //dx: if(_nz)
-    Else, //dx: else
-    EndIf, //dx: endif
-    Return, //dx: return
-    Loop, //dx: loop
-    ForLoop, //dx: --- (loop, ige for example)
-    EndLoop, //dx: endloop
-    Break, //dx: break
-    Continue, //dx: continue
-    Switch, //dx: switch
-    Case, //dx: case
-    Default, //dx: default
-    EndSwitch, //dx: endswitch
+    
+    IfTrue, 
+    IfFalse, 
+    Else, 
+    EndIf, 
+    Return, 
+    Loop, 
+    ForLoop, 
+    EndLoop, 
+    Break, 
+    Continue, 
+    Switch, 
+    Case, 
+    Default, 
+    EndSwitch, 
 
-    // graphics
-    Discard, //dx: discard
-    Sample, //dx: sample
-    SampleLODBias, //dx: sample_b
-    SampleComparison, //dx: sample_c
-    SampleComparisonLODZero, //dx: sample_c_lz
-    SampleLOD, //dx: sample_l
-    SampleDerivative, //dx: sample_d
-    LoadResource, //dx: ld
-    LoadResourceMultisampled, //dx: ld2dms
-    LoadResourceStructured, //dx: ld_structured
+    
+    Discard, 
+    Sample, 
+    SampleLODBias, 
+    SampleComparison, 
+    SampleComparisonLODZero, 
+    SampleLOD, 
+    SampleDerivative, 
+    LoadResource, 
+    LoadResourceMultisampled, 
+    LoadResourceStructured, 
 
-    // artifical instructions
-    GetDimensions, //dx: --- (resinfo/sampleinfo)
+    
+    GetDimensions, 
 
-    // math
+    
     MultiplyMatrixByVector,
 
-    // unity
+    
     UnityObjectToClipPos,
     UnityObjectToWorldNormal,
     WorldSpaceViewDir,
 
-    // extra
+    
     Comment
 }

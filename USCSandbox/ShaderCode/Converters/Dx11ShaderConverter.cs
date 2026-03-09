@@ -27,34 +27,34 @@ public static class Dx11ShaderConverter
 
             var subProgInf = subProgInfs[0];
 
-            // get subprogram header (data) and dxbc bytes (data stream)
+            
             var subProgData = blobMan.GetShaderSubProgram((int)subProgInf.BlobIndex);
             var subProgDataStream = new MemoryStream(subProgData.ProgramData);
 
-            // parse dxbc shader
+            
             var offset = GetDirectXDataOffset(version, GPUPlatform.d3d11, subProgDataStream.ReadByte());
             var trimmedData = new SegmentStream(subProgDataStream, offset);
             var dxShader = new DirectXCompiledShader(trimmedData);
 
-            // convert to usil
+            
             var dx2UsilConverter = new DirectXProgramToUsil(dxShader);
             dx2UsilConverter.Convert();
 
-            // get shader and params
+            
             var uShaderProg = dx2UsilConverter.Shader;
             var shaderParams = subProgInf.UsesParameterBlob
                 ? blobMan.GetShaderParams((int)subProgInf.ParameterBlobIndex)
-                : subProgData.ShaderParams!; //! we would have thrown if this was null by now
+                : subProgData.ShaderParams!; 
 
             if (program.CommonParams is { } commonParams)
             {
                 shaderParams.CombineCommon(commonParams);
             }
 
-            // apply metadata to ushader
+            
             ApplyMetadataToProgram(uShaderProg, subProgData, shaderParams, version);
 
-            // save decompiled shader into dict
+            
             var funcType = uShaderProg.ShaderFunctionType;
             var comboKeywords = subProgData.GlobalKeywords.Concat(subProgData.LocalKeywords)
                 .Order()
@@ -84,7 +84,7 @@ public static class Dx11ShaderConverter
 
     private static int GetDirectXDataOffset(UnityVersion version, GPUPlatform graphicApi, int headerVersion)
     {
-        // this check is slightly useless because we onnly support dx11 right now :3
+        
         bool hasHeader = graphicApi != GPUPlatform.d3d9;
         if (hasHeader)
         {

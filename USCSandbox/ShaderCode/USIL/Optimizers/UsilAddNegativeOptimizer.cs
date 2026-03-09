@@ -2,9 +2,9 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Optimizers;
-/// <summary>
-/// Changes A + -B to A - B
-/// </summary>
+
+
+
 public class UsilAddNegativeOptimizer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -34,7 +34,7 @@ public class UsilAddNegativeOptimizer : IUsilOptimizer
                 }
             }
         }
-        return changes; // any changes made?
+        return changes; 
     }
 
     private static bool IsTrulyNegative(UsilOperand operand)
@@ -45,7 +45,7 @@ public class UsilAddNegativeOptimizer : IUsilOptimizer
             {
                 foreach (int imm in operand.ImmInt)
                 {
-                    // this includes 0 as being ok for negative. hopefully there are no +/- 0 instructions?
+                    
                     if (imm > 0)
                     {
                         return false;

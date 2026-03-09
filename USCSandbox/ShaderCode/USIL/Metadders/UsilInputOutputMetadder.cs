@@ -18,7 +18,7 @@ public class UsilInputOutputMetadder : IUsilOptimizer
                 UseMetadata(operand, shader);
             }
         }
-        return true; // any changes made?
+        return true; 
     }
 
     private static void UseMetadata(UsilOperand operand, UShaderProgram shader)
@@ -30,11 +30,11 @@ public class UsilInputOutputMetadder : IUsilOptimizer
                 i => i.Register == operand.RegisterIndex && (searchMask & i.Mask) == searchMask
             );
 
-            // bail since we can't find the input
+            
             if (input == null)
                 return;
 
-            // correct mask
+            
             operand.Mask = MatchMaskToInputOutput(operand.Mask, input.Mask, true);
 
             if (shader.ShaderFunctionType == UShaderFunctionType.Fragment && input.Type == "SV_IsFrontFace")
@@ -67,7 +67,7 @@ public class UsilInputOutputMetadder : IUsilOptimizer
 
             foreach (UsilInputOutput output in outputs)
             {
-                // correct mask
+                
                 int[] matchedMask = MatchMaskToInputOutput(operand.Mask, output.Mask, true);
                 int[] realMatchedMask = MatchMaskToInputOutput(operand.Mask, output.Mask, false);
                 operand.Mask = matchedMask;
@@ -97,7 +97,7 @@ public class UsilInputOutputMetadder : IUsilOptimizer
 
     private static int[] MatchMaskToInputOutput(int[] mask, int maskTest, bool moveSwizzles)
     {
-        // Move swizzles (for example, .zw -> .xy) based on first letter
+        
         int moveCount = 0;
         int i;
         for (i = 0; i < 4; i++)
@@ -111,7 +111,7 @@ public class UsilInputOutputMetadder : IUsilOptimizer
             maskTest >>= 1;
         }
 
-        // Count remaining 1 bits
+        
         int bitCount = 0;
         for (; i < 4; i++)
         {

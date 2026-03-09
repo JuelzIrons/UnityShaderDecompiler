@@ -5,11 +5,11 @@ using USCSandbox.ShaderMetadata;
 using UnityVersion = AssetRipper.Primitives.UnityVersion;
 
 namespace USCSandbox.ShaderCode.Converters;
-public static class Gles3ShaderConverter
+public static class MetalShaderConverter
 {
-    public static List<Gles3ShaderSubprogram> Convert(SerializedPass pass, BlobManager blobMan, UnityVersion version)
+    public static List<MetalShaderSubprogram> Convert(SerializedPass pass, BlobManager blobMan, UnityVersion version)
     {
-        var subProgs = new List<Gles3ShaderSubprogram>();
+        var subProgs = new List<MetalShaderSubprogram>();
 
         foreach (var program in pass.Programs)
         {
@@ -26,8 +26,7 @@ public static class Gles3ShaderConverter
             var programType = subProgData.GetProgramType(version);
             var funcType = GetFunctionType(programType);
 
-            
-            var glslSource = ExtractGlslSource(subProgData.ProgramData);
+            var mslSource = ExtractMslSource(subProgData.ProgramData);
 
             var shaderParams = subProgInf.UsesParameterBlob
                 ? blobMan.GetShaderParams((int)subProgInf.ParameterBlobIndex)
@@ -42,36 +41,33 @@ public static class Gles3ShaderConverter
                 .Order()
                 .ToArray();
 
-            subProgs.Add(new Gles3ShaderSubprogram(glslSource, shaderParams, funcType, comboKeywords));
+            subProgs.Add(new MetalShaderSubprogram(mslSource, shaderParams, funcType, comboKeywords));
         }
 
         return subProgs;
     }
 
-    private static string ExtractGlslSource(byte[] programData)
+    private static string ExtractMslSource(byte[] programData)
     {
-        
-        
         if (programData.Length == 0)
             return "// Empty program data";
 
-        
-        
         int offset = 0;
 
-        
         if (programData.Length > 0)
             offset = 1;
-
-        
-        for (int i = 0; i < Math.Min(programData.Length, 64); i++)
+        for (int i = 0; i < Math.Min(programData.Length, 128); i++)
         {
             if (i + 8 < programData.Length)
             {
-                var snippet = System.Text.Encoding.UTF8.GetString(programData, i, Math.Min(8, programData.Length - i));
-                if (snippet.StartsWith("#version") || snippet.StartsWith("#ifdef") ||
-                    snippet.StartsWith("//") || snippet.StartsWith("uniform") ||
-                    snippet.StartsWith("precis"))
+                var snippet = System.Text.Encoding.UTF8.GetString(programData, i, Math.Min(24, programData.Length - i));
+                if (snippet.StartsWith("#include <metal_stdlib>") ||
+                    snippet.StartsWith("using namespace metal") ||
+                    snippet.StartsWith("vertex ") ||
+                    snippet.StartsWith("fragment ") ||
+                    snippet.StartsWith("kernel ") ||
+                    snippet.StartsWith("//") ||
+                    snippet.StartsWith("#"))
                 {
                     offset = i;
                     break;
@@ -79,7 +75,6 @@ public static class Gles3ShaderConverter
             }
         }
 
-        
         int end = programData.Length;
         for (int i = offset; i < programData.Length; i++)
         {
@@ -91,7 +86,7 @@ public static class Gles3ShaderConverter
         }
 
         if (end <= offset)
-            return "// Could not extract GLSL source";
+            return "";
 
         return System.Text.Encoding.UTF8.GetString(programData, offset, end - offset);
     }
@@ -100,36 +95,32 @@ public static class Gles3ShaderConverter
     {
         return progType switch
         {
-            ShaderGpuProgramType.GLES3 or
-            ShaderGpuProgramType.GLES31 or
-            ShaderGpuProgramType.GLES31AEP => true,
+            ShaderGpuProgramType.MetalVS or
+            ShaderGpuProgramType.MetalFS => true,
             _ => false,
         };
     }
 
     private static string GetFunctionType(ShaderGpuProgramType progType)
     {
-        
-        
         return progType switch
         {
-            ShaderGpuProgramType.GLES3 or
-            ShaderGpuProgramType.GLES31 or
-            ShaderGpuProgramType.GLES31AEP => "GLES3",
+            ShaderGpuProgramType.MetalVS => "MetalVS",
+            ShaderGpuProgramType.MetalFS => "MetalFS",
             _ => "Unknown",
         };
     }
 
-    public class Gles3ShaderSubprogram
+    public class MetalShaderSubprogram
     {
-        public string GlslSource;
+        public string MslSource;
         public ShaderParameters Parameters;
         public string FunctionType;
         public string[] Keywords;
 
-        public Gles3ShaderSubprogram(string glslSource, ShaderParameters parameters, string functionType, string[] keywords)
+        public MetalShaderSubprogram(string mslSource, ShaderParameters parameters, string functionType, string[] keywords)
         {
-            GlslSource = glslSource;
+            MslSource = mslSource;
             Parameters = parameters;
             FunctionType = functionType;
             Keywords = keywords;

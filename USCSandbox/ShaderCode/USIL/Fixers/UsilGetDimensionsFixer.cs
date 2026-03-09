@@ -2,9 +2,9 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Fixers;
-/// <summary>
-/// Combines ResourceDimensionInfo and SampleCountInfo into a single GetDimensions call
-/// </summary>
+
+
+
 public class UsilGetDimensionsFixer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -24,7 +24,7 @@ public class UsilGetDimensionsFixer : IUsilOptimizer
             {
                 if (instructions[i].InstructionType == UsilInstructionType.ResourceDimensionInfo)
                 {
-                    // discard unused NumberOfLevels for GetDimensions
+                    
                     if (!shader.Locals.Any(l => l.Name == "resinfo_extra"))
                     {
                         shader.Locals.Add(new UsilLocal("float", "resinfo_extra", UsilLocalType.Scalar));
@@ -37,7 +37,7 @@ public class UsilGetDimensionsFixer : IUsilOptimizer
             UsilInstruction resinfoInst = instructions[0];
             UsilInstruction sampleinfoInst = instructions[1];
 
-            // needed? (did I even get the right registers?)
+            
             if (resinfoInst.SrcOperands[1].RegisterIndex != sampleinfoInst.SrcOperands[0].RegisterIndex)
             {
                 continue;
@@ -45,10 +45,10 @@ public class UsilGetDimensionsFixer : IUsilOptimizer
 
             resinfoInst.SrcOperands[5] = sampleinfoInst.DestOperand;
 
-            instructions.RemoveAt(i + 1); // remove SampleCountInfo
+            instructions.RemoveAt(i + 1); 
             changes = true;
         }
 
-        return changes; // any changes made?
+        return changes; 
     }
 }

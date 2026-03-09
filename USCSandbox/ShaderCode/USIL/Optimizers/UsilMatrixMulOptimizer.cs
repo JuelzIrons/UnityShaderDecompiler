@@ -3,14 +3,14 @@ using USCSandbox.ShaderMetadata;
 using static USCSandbox.ShaderCode.USIL.UsilOptimizerUtil;
 
 namespace USCSandbox.ShaderCode.USIL.Optimizers;
-/// <summary>
-/// Converts multiple multiply operations into a single matrix one
-/// "instruction"
-/// </summary>
-/// <remarks>
-/// Note: cbuffers must be converted to matrix type by this point.
-/// It's a miracle when this works. There's so many issues with how this works fundamentally.
-/// </remarks>
+
+
+
+
+
+
+
+
 public class UsilMatrixMulOptimizer : IUsilOptimizer
 {
     private static readonly int[] XYZW_MASK = new int[] { 0, 1, 2, 3 };
@@ -35,7 +35,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         return changes;
     }
 
-    // mat4x4 * vec4(vec3, 1)
+    
     private static bool ReplaceMulMatrixVec4W1(UShaderProgram shader)
     {
         bool changes = false;
@@ -43,7 +43,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         List<UsilInstruction> insts = shader.Instructions;
         for (int i = 0; i < insts.Count - 3; i++)
         {
-            // do detection
+            
 
             bool opcodesMatch = DoOpcodesMatch(insts, i, new[] {
                 UsilInstructionType.Multiply,
@@ -89,8 +89,8 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
             int tmp2Index = inst2.DestOperand.RegisterIndex;
             int tmp3Index = inst3.DestOperand.RegisterIndex;
 
-            // registers can swap halfway through to be used for something else
-            // don't try to convert the matrix because we can't handle this yet
+            
+            
             if (tmp0Index != tmp1Index || tmp1Index != tmp2Index || tmp2Index != tmp3Index)
             {
                 continue;
@@ -110,8 +110,8 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // todo: input isn't guaranteed temp
-            // todo: is input guaranteed to start at x?
+            
+            
             int inpIndex = inst0.SrcOperands[0].RegisterIndex;
             bool inputsCorrect =
                 inst0.SrcOperands[0].RegisterIndex == inpIndex &&
@@ -128,7 +128,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // make replacement
+            
 
             UsilOperand mulInputVec3Operand = new UsilOperand(inst0.SrcOperands[0]);
             UsilOperand mulInputMat4x4Operand = new UsilOperand(inst0.SrcOperands[1]);
@@ -164,7 +164,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         return changes;
     }
 
-    // mat4x4 * vec4
+    
     private static bool ReplaceMulMatrixVec4(UShaderProgram shader)
     {
         bool changes = false;
@@ -172,7 +172,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         List<UsilInstruction> insts = shader.Instructions;
         for (int i = 0; i < insts.Count - 3; i++)
         {
-            // do detection
+            
 
             bool opcodesMatch = DoOpcodesMatch(insts, i, new[] {
                 UsilInstructionType.Multiply,
@@ -218,8 +218,8 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
             int tmp2Index = inst2.DestOperand.RegisterIndex;
             int tmp3Index = inst3.DestOperand.RegisterIndex;
 
-            // registers can swap halfway through to be used for something else
-            // don't try to convert the matrix because we can't handle this yet
+            
+            
             if (tmp0Index != tmp1Index || tmp1Index != tmp2Index || tmp2Index != tmp3Index)
             {
                 continue;
@@ -242,7 +242,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // todo: input isn't guaranteed temp
+            
             int inpIndex = inst0.SrcOperands[0].RegisterIndex;
             bool inputsCorrect =
                 inst0.SrcOperands[0].RegisterIndex == inpIndex &&
@@ -262,7 +262,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // make replacement
+            
 
             UsilOperand mulInputVec4Operand = new UsilOperand(inst0.SrcOperands[0]);
             UsilOperand mulInputMat4x4Operand = new UsilOperand(inst0.SrcOperands[1]);
@@ -286,7 +286,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         return changes;
     }
 
-    // mat3x3 * vec3
+    
     private static bool ReplaceMulMatrixVec3(UShaderProgram shader)
     {
 
@@ -295,7 +295,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
         List<UsilInstruction> insts = shader.Instructions;
         for (int i = 0; i < insts.Count - 3; i++)
         {
-            // do detection
+            
 
             bool opcodesMatch = DoOpcodesMatch(insts, i, new[] {
                 UsilInstructionType.Multiply,
@@ -341,8 +341,8 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
             int tmp2Index = inst2.DestOperand.RegisterIndex;
             int tmp3Index = inst3.DestOperand.RegisterIndex;
 
-            // registers can swap halfway through to be used for something else
-            // don't try to convert the matrix because we can't handle this yet
+            
+            
             if (tmp0Index != tmp1Index || tmp1Index != tmp2Index || tmp2Index != tmp3Index)
             {
                 continue;
@@ -362,8 +362,8 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // todo: input isn't guaranteed temp
-            // todo: is input guaranteed to start at x?
+            
+            
             int inpIndex = inst0.SrcOperands[0].RegisterIndex;
             bool inputsCorrect =
                 inst0.SrcOperands[0].RegisterIndex == inpIndex &&
@@ -380,7 +380,7 @@ public class UsilMatrixMulOptimizer : IUsilOptimizer
                 continue;
             }
 
-            // make replacement
+            
 
             UsilOperand mulInputVec3Operand = new UsilOperand(inst0.SrcOperands[0]);
             UsilOperand mulInputMat3x3Operand = new UsilOperand(inst0.SrcOperands[1]);

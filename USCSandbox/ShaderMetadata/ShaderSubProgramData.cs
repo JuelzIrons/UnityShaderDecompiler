@@ -25,9 +25,9 @@ public class ShaderSubProgramData
         var hasStatsTempRegister = version.GreaterThanOrEquals(5, 5);
         var hasLocalKeywords = version.LessThan(2021, 2) && version.GreaterThanOrEquals(2019, 1);
 
-        // date version, in decimal. not a reliable source of information.
-        // always use the game's engine version rather than this value
-        // for making decoding decisions.
+        
+        
+        
         var blobVersion = r.ReadInt32();
 
         ProgramType = r.ReadInt32();
@@ -70,7 +70,7 @@ public class ShaderSubProgramData
         bool dataInParameterBlob = r.Position == r.BaseStream.Length;
         ShaderParams = !dataInParameterBlob
             ? new ShaderParameters(r, version, false)
-            : null; // read from ParameterBlob in >= 2021.?.?
+            : null; 
     }
 
     public ShaderGpuProgramType GetProgramType(UnityVersion version)

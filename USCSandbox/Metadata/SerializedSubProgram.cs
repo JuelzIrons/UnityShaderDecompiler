@@ -22,18 +22,18 @@ public class SerializedSubProgram
 
         if (!field["m_VectorParam"].IsDummy)
         {
-            // seen in 2019.4 game
+            
             Params = new SerializedProgramParameters(field, nameTable);
         }
         else if (!field["m_Parameters"].IsDummy)
         {
-            // seen in 2021.3 game
+            
             Params = new SerializedProgramParameters(field["m_Parameters"], nameTable);
         }
         else
         {
-            // seen in 6.0 game
-            // ... no params here, see ParameterBlob
+            
+            
             if (ParameterBlobIndex == uint.MaxValue)
             {
                 throw new NotSupportedException(

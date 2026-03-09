@@ -55,8 +55,8 @@ public class NvnProgramToUsil
             { Instruction.Return, new InstHandler(HandleReturn) }
         };
 
-        // locals are not ID'd but pointers to specific operands
-        // instead. we create a dictionary so we have actual IDs.
+        
+        
         _ryuLocals = [];
         _ryuLabels = [];
         _resourceToDimension = [];
@@ -72,8 +72,8 @@ public class NvnProgramToUsil
 
     private void GenerateRyujinxIl()
     {
-        //ResourceManager resourceManager = _nvnShader.CreateResourceManager(false);
-        //_ryuIl = Translator.EmitShader(_nvnShader, resourceManager, _prog, false, true, out _);
+        
+        
         var funcs = _nvnShader.TranslateToFunctions();
         var func = funcs[0];
         var insts = new List<INode>();
@@ -105,7 +105,7 @@ public class NvnProgramToUsil
 
     private void ConvertInstructions()
     {
-        //Operation[] mainFuncCode = _ryuIl[0].Code;
+        
 
         Console.WriteLine(">>>");
         Console.WriteLine(_nvnShader.Translate().Code);
@@ -158,7 +158,7 @@ public class NvnProgramToUsil
         }
     }
 
-    // move
+    
     private string RyuOperationToString(Operation operation)
     {
         string maskedInst = (operation.Inst & Instruction.Mask).ToString();
@@ -180,7 +180,7 @@ public class NvnProgramToUsil
         return $"{maskedInst}({storeKind}) {string.Join(",", destStrs)} <= {string.Join(",", srcStrs)}";
     }
 
-    // move
+    
     private string RyuPhiNodeToString(PhiNode operation)
     {
         List<string> destStrs = Enumerable.Range(0, operation.DestsCount)
@@ -194,7 +194,7 @@ public class NvnProgramToUsil
         return $"$phi {string.Join(",", destStrs)} <= {string.Join(",", srcStrs)}";
     }
 
-    // move
+    
     private string RyuOperandToString(Operand operand)
     {
         switch (operand.Type)
@@ -226,7 +226,7 @@ public class NvnProgramToUsil
         }
     }
 
-    // move
+    
     private string RyuRegisterToString(Register register)
     {
         string typePrefix = register.Type switch
@@ -251,14 +251,14 @@ public class NvnProgramToUsil
             }
             case RyuOperandType.ConstantBuffer:
             {
-                // ??? probably needs fixing
+                
                 int cbufSlot = mxOperand.GetCbufSlot();
                 int cbufOffset = mxOperand.GetCbufOffset();
                 int vecIndex = cbufOffset >> 2;
                 int elemIndex = cbufOffset & 3;
 
                 usilOperand.OperandType = UsilOperandType.ConstantBuffer;
-                usilOperand.RegisterIndex = 3 - cbufSlot; // idk
+                usilOperand.RegisterIndex = 3 - cbufSlot; 
                 usilOperand.ArrayIndex = vecIndex;
                 usilOperand.Mask = [elemIndex];
                 break;
@@ -290,7 +290,7 @@ public class NvnProgramToUsil
                 }
                 else
                 {
-                    // unsupported
+                    
                     usilOperand.OperandType = UsilOperandType.Comment;
                     usilOperand.Comment = $"/*{mxOperand.Type}/{mxOperand.Value}/{reg.Type}/1*/";
                 }

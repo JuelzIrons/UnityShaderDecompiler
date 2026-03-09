@@ -2,9 +2,9 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Optimizers;
-/// <summary>
-/// Turns loops into for loop
-/// </summary>
+
+
+
 public class UsilForLoopOptimizer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -16,15 +16,15 @@ public class UsilForLoopOptimizer : IUsilOptimizer
         return changes;
     }
 
-    // Loop
-    // BreakConditional (If / Break / EndIf)
-    // ...
-    // Add
-    // EndLoop
-    // ->
-    // ForLoop
-    // ...
-    // EndLoop
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private bool ReplaceForLoop(UShaderProgram shader)
     {
         bool changes = false;
@@ -35,14 +35,14 @@ public class UsilForLoopOptimizer : IUsilOptimizer
         List<UsilInstruction> insts = shader.Instructions;
         for (int i = 0; i < insts.Count - 5; i++)
         {
-            // do detection
+            
 
             if (insts[i].InstructionType == UsilInstructionType.EndLoop)
             {
                 loopDepth--;
                 if (loopInfos.Count > 0 && loopInfos.Peek().loopDepth == loopDepth)
                 {
-                    // didn't match and we're exiting this loop now
+                    
                     loopInfos.Pop();
                 }
             }
@@ -59,7 +59,7 @@ public class UsilForLoopOptimizer : IUsilOptimizer
                 UsilInstruction compInst = insts[i + 1];
                 UsilInstruction ifInst = insts[i + 2];
 
-                // todo doesn't check for iterator in other side of comparison
+                
                 bool breakcUsesComp =
                     compInst.DestOperand.RegisterIndex == ifInst.SrcOperands[0].RegisterIndex &&
                     DoMasksMatch(compInst.DestOperand.Mask, ifInst.SrcOperands[0].Mask);
@@ -129,13 +129,13 @@ public class UsilForLoopOptimizer : IUsilOptimizer
                         new UsilOperand(loopDepth - 1)
                     };
 
-                    insts.RemoveAt(i); // Add/Subtract
-                    insts.RemoveAt(startIndex + 1); // Compare
-                    insts.RemoveAt(startIndex + 1); // If
-                    insts.RemoveAt(startIndex + 1); // Break
-                    insts.RemoveAt(startIndex + 1); // EndIf
+                    insts.RemoveAt(i); 
+                    insts.RemoveAt(startIndex + 1); 
+                    insts.RemoveAt(startIndex + 1); 
+                    insts.RemoveAt(startIndex + 1); 
+                    insts.RemoveAt(startIndex + 1); 
 
-                    i -= 4 - 1; // move iterator back for these five
+                    i -= 4 - 1; 
 
                     changes = true;
                 }
@@ -146,7 +146,7 @@ public class UsilForLoopOptimizer : IUsilOptimizer
                 List<UsilOperand> allOperands = GetAllOperands(insts[i]);
                 foreach (UsilOperand op in allOperands)
                 {
-                    // todo: split mask from instruction if more than one component
+                    
                     if (op.OperandType == UsilOperandType.TempRegister && op.Mask.Length == 1)
                     {
                         foreach (LoopInstanceInfo loopInfo in loopInfos)

@@ -2,10 +2,10 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Fixers;
-/// <summary>
-/// Converts a value (that we defaulted to float) to an integer
-/// since we see it is obviously part of an integer operation.
-/// </summary>
+
+
+
+
 public class USILObviousUIntFixer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -32,7 +32,7 @@ public class USILObviousUIntFixer : IUsilOptimizer
                     operand.ImmInt = new int[count];
                     for (int j = 0; j < count; j++)
                     {
-                        //int intValue = BitConverter.SingleToInt32Bits(operand.immValueFloat[j]);
+                        
                         operand.ImmInt[j] = (int)operand.ImmFloat[j];
                     }
                     operand.OperandType = UsilOperandType.ImmediateInt;
@@ -40,6 +40,6 @@ public class USILObviousUIntFixer : IUsilOptimizer
             }
         }
 
-        return changes; // any changes made?
+        return changes; 
     }
 }

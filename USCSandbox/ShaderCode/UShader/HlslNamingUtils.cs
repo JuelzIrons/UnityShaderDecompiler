@@ -49,7 +49,7 @@ public static class HlslNamingUtils
 
     public static string GetComponentName(VertexComponent component)
     {
-        // where is tangent?
+        
         return component switch
         {
             VertexComponent.None => "none",
@@ -90,7 +90,7 @@ public static class HlslNamingUtils
         string name = $"unknownType";
         string baseName = paramType.ToString().ToLower();
 
-        // sometimes it's column long, sometimes it's row long
+        
         if (columnCount == 1)
         {
             if (rowCount == 1)
@@ -215,7 +215,7 @@ public static class HlslNamingUtils
             }
             case "SV_StencilRef":
             {
-                return "oStencilRef"; // not in 3dmigoto
+                return "oStencilRef"; 
             }
         }
 
@@ -265,7 +265,7 @@ public static class HlslNamingUtils
             }
             case UsilOperandType.OutputControlPointID:
             {
-                return "outputControlPointID"; // not in 3dmigoto
+                return "outputControlPointID"; 
             }
             case UsilOperandType.OutputDepth:
             {
@@ -285,7 +285,7 @@ public static class HlslNamingUtils
             }
             case UsilOperandType.StencilRef:
             {
-                return "oStencilRef"; // not in 3dmigoto
+                return "oStencilRef"; 
             }
         }
 

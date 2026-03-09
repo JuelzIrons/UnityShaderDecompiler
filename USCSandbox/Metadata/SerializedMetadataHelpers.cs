@@ -5,9 +5,9 @@ public static class SerializedMetadataHelpers
 {
     public static AssetTypeValueField GetArrayFirstValue(AssetTypeValueField field)
     {
-        // access field["Array"][^1] if it exists (new version)
-        // else access field normally. not sure why there might be
-        // more than one used element in the new version array...
+        
+        
+        
         var tempField = field.TemplateField;
         if (tempField.Children.Count < 2)
             return field;

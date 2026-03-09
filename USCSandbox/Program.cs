@@ -51,7 +51,6 @@ internal class Program
             }
         }
 
-        // Interactive mode: no args, just double-clicked the exe
         if (args.Length == 0)
         {
             Console.WriteLine("=== USCS Shader Exporter ===");
@@ -68,7 +67,7 @@ internal class Program
             }
 
             Console.WriteLine();
-            Console.WriteLine($"Platform options: gles3, vulkan, d3d11, Switch");
+            Console.WriteLine($"Platform options: gles3, vulkan, d3d11, Switch, metal");
             Console.Write("Enter platform (or press Enter for gles3): ");
             platform = GPUPlatform.gles3;
             var platInput = Console.ReadLine()?.Trim();
@@ -248,7 +247,6 @@ internal class Program
 
         foreach (var filePath in files)
         {
-            // Skip .resource files and other non-asset files
             if (filePath.EndsWith(".resource", StringComparison.OrdinalIgnoreCase) ||
                 filePath.EndsWith(".resS", StringComparison.OrdinalIgnoreCase))
                 continue;
@@ -348,7 +346,6 @@ internal class Program
 
                 if (ver is null)
                 {
-                    // Try reading version from globalgamemanagers in the same directory
                     ver = TryGetVersionFromDirectory(directory, versionOverride);
                 }
 
@@ -412,15 +409,13 @@ internal class Program
 
                 var shaderName = shaderBf["m_ParsedForm"]["m_Name"].AsString;
 
-                // Auto-detect platform if the requested one isn't available
                 var actualPlatform = platform;
                 var shaderPlatforms = shaderBf["platforms.Array"]
                     .Select(i => (GPUPlatform)i.AsInt).ToList();
 
                 if (!shaderPlatforms.Contains(platform) && shaderPlatforms.Count > 0)
                 {
-                    // Prefer supported platforms: gles3, vulkan, d3d11, Switch
-                    GPUPlatform[] preferred = [GPUPlatform.gles3, GPUPlatform.vulkan, GPUPlatform.d3d11, GPUPlatform.Switch];
+                    GPUPlatform[] preferred = [GPUPlatform.gles3, GPUPlatform.vulkan, GPUPlatform.d3d11, GPUPlatform.Switch, GPUPlatform.metal];
                     actualPlatform = preferred.FirstOrDefault(p => shaderPlatforms.Contains(p), shaderPlatforms[0]);
                 }
 
@@ -452,7 +447,6 @@ internal class Program
         if (versionOverride != null)
             return versionOverride;
 
-        // Try globalgamemanagers first, then any .assets file
         var ggmPath = Path.Combine(directory, "globalgamemanagers");
         string[] candidates = File.Exists(ggmPath)
             ? [ggmPath, ..Directory.GetFiles(directory, "*.assets")]
@@ -500,27 +494,19 @@ internal class Program
             fs.Read(buf, 0, 16);
             var sig = System.Text.Encoding.ASCII.GetString(buf, 0, 8);
 
-            // Unity asset bundle signatures
             if (sig.StartsWith("UnityFS") || sig.StartsWith("UnityWeb") || sig.StartsWith("UnityRaw"))
                 return UnityFileType.Bundle;
 
-            // Serialized asset file detection:
-            // First 4 bytes are big-endian metadata size, bytes 8-11 are big-endian file size or zero,
-            // bytes 12-15 are big-endian data offset. Check for version number at bytes 4-7.
-            // Version 0x16 (22) is common for Unity 2020+, 0x15 (21) for Unity 2019, etc.
             int version = (buf[4] << 24) | (buf[5] << 16) | (buf[6] << 8) | buf[7];
             if (version >= 9 && version <= 50)
             {
-                // Likely a serialized file
                 return UnityFileType.Assets;
             }
 
-            // Also detect by known file extensions
             var ext = Path.GetExtension(filePath).ToLowerInvariant();
             if (ext == ".assets")
                 return UnityFileType.Assets;
 
-            // Hash-named files (32+ hex chars, no extension) are often serialized assets
             var name = Path.GetFileName(filePath);
             if (name.Length >= 32 && !name.Contains('.') && name.All(c => "0123456789abcdef".Contains(c)))
                 return UnityFileType.Assets;
@@ -536,7 +522,6 @@ internal class Program
     static string SanitizeFileName(string name)
     {
         var invalid = Path.GetInvalidFileNameChars();
-        // Preserve path separators by only sanitizing each segment
         var parts = name.Split('/');
         for (int i = 0; i < parts.Length; i++)
         {

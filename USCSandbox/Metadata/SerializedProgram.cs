@@ -55,7 +55,7 @@ public class SerializedProgram
 
         if (!program["m_CommonParameters"].IsDummy)
         {
-            // seen in 2021.3 game and up, but not 2019.4 game
+            
             CommonParams = new SerializedProgramParameters(program["m_CommonParameters"], nameTable);
         }
     }

@@ -2,9 +2,9 @@
 using USCSandbox.ShaderMetadata;
 
 namespace USCSandbox.ShaderCode.USIL.Optimizers;
-/// <summary>
-/// Replaces XXX & YYY with XXX ? YYY : 0 if XXX holds a comparison value
-/// </summary>
+
+
+
 public class UsilAndOptimizer : IUsilOptimizer
 {
     public bool Run(UShaderProgram shader, ShaderParameters shaderParams)
@@ -16,7 +16,7 @@ public class UsilAndOptimizer : IUsilOptimizer
         List<UsilInstruction> instructions = shader.Instructions;
         foreach (UsilInstruction instruction in instructions)
         {
-            // track if a register (and its masks) come from comparison results or not
+            
             UsilOperand? destOperand = instruction.DestOperand;
 
             if (IsComparisonOrBooleanOp(instruction))
@@ -76,7 +76,7 @@ public class UsilAndOptimizer : IUsilOptimizer
                         };
                     }
 
-                    // output is comparison if both are comparison (because result is also comparison)
+                    
                     if (leftIsComparison && rightIsComparison)
                     {
                         SetRegisterIsComparison(destOperand, true, _comparisonResultRegisters);
@@ -88,14 +88,14 @@ public class UsilAndOptimizer : IUsilOptimizer
                 }
             }
         }
-        return changes; // any changes made?
+        return changes; 
     }
 
     private static void SetRegisterIsComparison(UsilOperand operand, bool isComparison, HashSet<string> _comparisonResultRegisters)
     {
         foreach (int maskIdx in operand.Mask)
         {
-            // I don't know if non temps can do this, so just use ToString without mask
+            
             if (isComparison)
             {
                 _comparisonResultRegisters.Add($"{operand.ToString(true)}.{UsilConstants.MASK_CHARS[maskIdx]}");
@@ -107,7 +107,7 @@ public class UsilAndOptimizer : IUsilOptimizer
         }
     }
 
-    // 3dmigoto checked if any match, here we check if they all match
+    
     private static bool IsRegisterComparison(UsilOperand operand, HashSet<string> _comparisonResultRegisters)
     {
         foreach (int maskIdx in operand.Mask)
@@ -122,7 +122,7 @@ public class UsilAndOptimizer : IUsilOptimizer
 
     private static bool IsComparisonOrBooleanOp(UsilInstruction instruction)
     {
-        // non-exhaustive list obviously
+        
         return instruction.IsComparisonType() || instruction.InstructionType == UsilInstructionType.Not;
     }
 }

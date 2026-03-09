@@ -113,7 +113,7 @@ namespace USCSandbox.ShaderCode.Converters.DirectXDisassembler
                             line += " mode_comparison";
                         break;
                     }
-                    //todo : assembleSystemValue
+                    
                 }
             }
 
@@ -141,7 +141,7 @@ namespace USCSandbox.ShaderCode.Converters.DirectXDisassembler
                 case Operand.Input:
                     return $"{prefix}v{op.arraySizes[0]}";
                 case Operand.Output:
-                    if (op.arraySizes.Length == 0) //why does this happen???
+                    if (op.arraySizes.Length == 0) 
                         return $"{prefix}o";
                     else
                         return $"{prefix}o{op.arraySizes[0]}";

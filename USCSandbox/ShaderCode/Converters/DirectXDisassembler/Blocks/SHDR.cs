@@ -125,7 +125,7 @@ public class SHDRInstruction
             reader.BaseStream.Position = endPos;
         }
     }
-    //DeocdeInstruction
+    
     public static int GetOperandCount(Opcode opcode)
     {
         switch (opcode)
@@ -148,7 +148,7 @@ public class SHDRInstruction
             case Opcode.hs_join_phase:
             case Opcode.dcl_hs_fork_phase_instance_count:
             case Opcode.sync:
-            case Opcode.customdata: //variable size
+            case Opcode.customdata: 
             case Opcode.dcl_sampler:
             case Opcode.dcl_outputtopology:
             case Opcode.dcl_inputprimitive:
@@ -429,9 +429,9 @@ public class SHDRInstructionOperand
             if (componentMode == 0)
             {
                 int mask = (operandData & 0x000000f0) >> 4;
-                // Not swizzle but using it anyway
+                
                 int p = 0;
-                // Count bits (pretty bad but works)
+                
                 for (int i = 0; i < 4; i++)
                 {
                     if ((mask >> i & 1) == 1)
@@ -621,7 +621,7 @@ public class SHDRDeclData
             }
             case Opcode.dcl_maxout:
             {
-                maxOutputVertexCount = reader.ReadInt32();//?
+                maxOutputVertexCount = reader.ReadInt32();
                 break;
             }
             case Opcode.dcl_tessellator_paritioning:
@@ -641,7 +641,7 @@ public class SHDRDeclData
             }
             case Opcode.dcl_thread_group:
             {
-                workGroupSize = new int[3] //?
+                workGroupSize = new int[3] 
                 {
                     reader.ReadInt32(),
                     reader.ReadInt32(),
@@ -667,7 +667,7 @@ public class SHDRDeclData
             {
                 reader.BaseStream.Position += 8;
                 nameToken = nameTokens[reader.ReadInt32()];
-                //todo edit: done yet?
+                
                 break;
             }
             case Opcode.dcl_input_ps_siv:
@@ -679,7 +679,7 @@ public class SHDRDeclData
             {
                 reader.BaseStream.Position += 8;
                 nameToken = nameTokens[reader.ReadInt32()];
-                //todo edit: done yet?
+                
                 break;
             }
             case Opcode.dcl_temps:
@@ -699,12 +699,12 @@ public class SHDRDeclData
                 int tableInfo = reader.ReadInt32();
                 interfaceFuncTableCount = tableInfo & 0x0000ffff;
                 interfaceArraySize = (tableInfo & unchecked((int)0xffff0000)) >> 16;
-                //todo
+                
                 break;
             }
             case Opcode.dcl_function_table:
             {
-                //todo
+                
                 break;
             }
             case Opcode.dcl_output_control_point_count:
@@ -723,7 +723,7 @@ public class SHDRDeclData
                 customDataArray = new float[customDataOperandCount][];
                 for (int i = 0; i < customDataOperandCount; i++)
                 {
-                    //how do we know which type? using float for now
+                    
                     customDataArray[i] = new float[4]
                     {
                         reader.ReadSingle(),
@@ -761,7 +761,7 @@ public class SHDRDeclData
                 uavGloballyCoherentAccess = instData & 0x00010000;
                 uavCounter = 0;
                 uavBufferSize = 0;
-                //todo
+                
                 break;
             }
             case Opcode.dcl_tgsm_structured:

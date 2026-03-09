@@ -45,7 +45,7 @@ public class UsilInstruction
         return sb.ToString();
     }
 
-    // todo: all of them
+    
     public bool IsComparisonType()
     {
         switch (InstructionType)

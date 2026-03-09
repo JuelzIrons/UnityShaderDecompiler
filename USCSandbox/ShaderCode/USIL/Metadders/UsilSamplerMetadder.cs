@@ -20,7 +20,7 @@ public class UsilSamplerMetadder : IUsilOptimizer
 
                     if (texParam == null)
                     {
-                        // fallback to -1 if it exists
+                        
                         texParam = shaderParams.TextureParameters.FirstOrDefault(
                             p => p.SamplerIndex == -1
                         );
@@ -79,6 +79,6 @@ public class UsilSamplerMetadder : IUsilOptimizer
                 }
             }
         }
-        return true; // any changes made?
+        return true; 
     }
 }

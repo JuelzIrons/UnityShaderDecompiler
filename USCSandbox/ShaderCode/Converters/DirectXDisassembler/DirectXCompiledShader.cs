@@ -6,9 +6,9 @@ namespace USCSandbox.ShaderCode.Converters.DirectXDisassembler
     public class DirectXCompiledShader
     {
         public byte[] hash;
-        /// <summary>
-        /// always 1
-        /// </summary>
+        
+        
+        
         public int version;
         public int size;
         public int blockCount;

@@ -113,7 +113,7 @@ public class DirectXProgramToUsil
             { Opcode.ige, new InstHandler(HandleGe) },
             { Opcode.uge, new InstHandler(HandleGe) },
             { Opcode.ret, new InstHandler(HandleRet) },
-            ////dec
+            
             { Opcode.dcl_temps, new InstHandler(HandleTemps) },
             { Opcode.dcl_resource, new InstHandler(HandleResource) },
             { Opcode.customdata, new InstHandler(HandleCustomData) }
@@ -248,8 +248,8 @@ public class DirectXProgramToUsil
         return sb.ToString();
     }
 
-    ///////////////////////
-    // internal stuff
+    
+    
 
     private void FillUSILOperand(SHDRInstructionOperand dxOperand, UsilOperand usilOperand, int[] mask, bool immIsInt)
     {
@@ -267,10 +267,10 @@ public class DirectXProgramToUsil
             }
             case Operand.ConstantBuffer:
             {
-                // figure out cb names in a later pass
+                
                 if (dxOperand.subOperands[1] != null)
                 {
-                    // todo combine cb and icb
+                    
                     int cbSlotIdx = dxOperand.arraySizes[0];
                     int cbOff = dxOperand.registerNumber;
                     SHDRInstructionOperand cbOperand = dxOperand.subOperands[1];
@@ -491,28 +491,28 @@ public class DirectXProgramToUsil
         }
     }
 
-    // there is a better way to check this, but this works too
+    
     private int[] MapMask(int[] destMask, int[] srcMask)
     {
         if (srcMask == null || srcMask.Length == 0)
         {
-            // immediates won't have a mask, so match them to destination values
+            
             return destMask;
         }
         else if (destMask == null || destMask.Length == 0 || destMask.Length == 4)
         {
-            // 0 shouldn't happen, but with mask 4 (xyzw) don't worry about mapping mask
-            // some registers like OutputDepth don't have mask, so skip them too
+            
+            
             return srcMask;
         }
         else if (destMask.Length == 1)
         {
-            // with mask size 1, all inputs are also only size 1
+            
             return new int[] { srcMask[0] };
         }
-        else //dest.mask.Length == (2 || 3)
+        else 
         {
-            // when mask size is 2 or 3, inputs will be size 4. map the masks correctly
+            
             int[] mask = new int[destMask.Length];
             for (int i = 0; i < mask.Length; i++)
             {
@@ -547,10 +547,10 @@ public class DirectXProgramToUsil
 
     private void HandleMovc(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation. If src0, then dest = src1 else dest = src2
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components on which to test the condition.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to move. 
-        SHDRInstructionOperand src2 = inst.operands[3]; // The components to move. 
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
+        SHDRInstructionOperand src2 = inst.operands[3]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -578,9 +578,9 @@ public class DirectXProgramToUsil
 
     private void HandleAdd(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The (vector/number) to add to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The (vector/number) to add to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -608,9 +608,9 @@ public class DirectXProgramToUsil
 
     private void HandleMul(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = src0 * src1
-        SHDRInstructionOperand src0 = inst.operands[1]; // The multiplicand.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The multiplier.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -639,17 +639,17 @@ public class DirectXProgramToUsil
 
     private void HandleIMul(SHDRInstruction inst)
     {
-        SHDRInstructionOperand destHI = inst.operands[0]; // The address of the high 32 bits of the result.
-        SHDRInstructionOperand destLO = inst.operands[1]; // The address of the high 32 bits of the result.
-        SHDRInstructionOperand src0 = inst.operands[2]; // The value to multiply with src1.
-        SHDRInstructionOperand src1 = inst.operands[3]; // The value to multiply with src0.
+        SHDRInstructionOperand destHI = inst.operands[0]; 
+        SHDRInstructionOperand destLO = inst.operands[1]; 
+        SHDRInstructionOperand src0 = inst.operands[2]; 
+        SHDRInstructionOperand src1 = inst.operands[3]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
         UsilOperand usilSrc0 = new UsilOperand();
         UsilOperand usilSrc1 = new UsilOperand();
 
-        // todo, hi isn't handled
+        
         FillUSILOperand(destLO, usilDest, destLO.swizzle, true);
         FillUSILOperand(src0, usilSrc0, MapMask(destLO.swizzle, src0.swizzle), true);
         FillUSILOperand(src1, usilSrc1, MapMask(destLO.swizzle, src1.swizzle), true);
@@ -670,9 +670,9 @@ public class DirectXProgramToUsil
 
     private void HandleDiv(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The dividend.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The divisor.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -701,10 +701,10 @@ public class DirectXProgramToUsil
 
     private void HandleMad(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = src0 * src1 + src2
-        SHDRInstructionOperand src0 = inst.operands[1]; // The multiplicand.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The multiplier.
-        SHDRInstructionOperand src2 = inst.operands[3]; // The addend.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
+        SHDRInstructionOperand src2 = inst.operands[3]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -736,9 +736,9 @@ public class DirectXProgramToUsil
 
     private void HandleAnd(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The 32-bit value to AND with src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The 32-bit value to AND with src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -762,9 +762,9 @@ public class DirectXProgramToUsil
 
     private void HandleOr(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components to OR with src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to OR with src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -788,9 +788,9 @@ public class DirectXProgramToUsil
 
     private void HandleXor(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components to XOR with src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to XOR with src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -814,8 +814,8 @@ public class DirectXProgramToUsil
 
     private void HandleNot(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The original components.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -836,8 +836,8 @@ public class DirectXProgramToUsil
 
     private void HandleFtoi(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation. dest = round_z(src0)
-        SHDRInstructionOperand src0 = inst.operands[1]; // The component to convert.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -866,8 +866,8 @@ public class DirectXProgramToUsil
 
     private void HandleItof(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // Contains the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // Contains the value to convert.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -896,9 +896,9 @@ public class DirectXProgramToUsil
 
     private void HandleMin(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = src0 < src1 ? src0 : src1
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components to compare to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to compare to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -926,9 +926,9 @@ public class DirectXProgramToUsil
 
     private void HandleMax(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = src0 >= src1 ? src0 : src1
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components to compare to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to compare to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -956,8 +956,8 @@ public class DirectXProgramToUsil
 
     private void HandleSqrt(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = sqrt(src0)
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components for which to take the square root.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -978,8 +978,8 @@ public class DirectXProgramToUsil
 
     private void HandleRsq(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // Contains the results of the operation. dest = 1.0f / sqrt(src0)
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components for the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1000,8 +1000,8 @@ public class DirectXProgramToUsil
 
     private void HandleLog(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation. dest = log2(src0)
-        SHDRInstructionOperand src0 = inst.operands[1]; // The value for the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1022,8 +1022,8 @@ public class DirectXProgramToUsil
 
     private void HandleExp(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation. dest = 2 ^ src0
-        SHDRInstructionOperand src0 = inst.operands[1]; // The exponent.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1033,7 +1033,7 @@ public class DirectXProgramToUsil
         FillUSILOperand(dest, usilDest, dest.swizzle, false);
         FillUSILOperand(src0, usilSrc1, MapMask(dest.swizzle, src0.swizzle), false);
 
-        // todo USE exp2!!!
+        
         usilInst.InstructionType = UsilInstructionType.ToThePower;
         usilInst.DestOperand = usilDest;
         usilInst.SrcOperands = new List<UsilOperand>
@@ -1047,8 +1047,8 @@ public class DirectXProgramToUsil
 
     private void HandleRcp(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results dest = 1.0f / src0.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The number to take the reciprocal of.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1069,8 +1069,8 @@ public class DirectXProgramToUsil
 
     private void HandleFrc(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation. dest = src0 - round_ni(src0)
-        SHDRInstructionOperand src0 = inst.operands[1]; // The component in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1091,8 +1091,8 @@ public class DirectXProgramToUsil
 
     private void HandleIneg(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // Contains the values for the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1101,7 +1101,7 @@ public class DirectXProgramToUsil
         FillUSILOperand(dest, usilDest, dest.swizzle, false);
         FillUSILOperand(src0, usilSrc0, MapMask(dest.swizzle, src0.swizzle), false);
 
-        usilInst.InstructionType = UsilInstructionType.Multiply; // todo: hack for now
+        usilInst.InstructionType = UsilInstructionType.Multiply; 
         usilInst.DestOperand = usilDest;
         usilInst.SrcOperands = new List<UsilOperand>
         {
@@ -1114,8 +1114,8 @@ public class DirectXProgramToUsil
 
     private void HandleRoundNi(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1136,8 +1136,8 @@ public class DirectXProgramToUsil
 
     private void HandleRoundPi(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1158,8 +1158,8 @@ public class DirectXProgramToUsil
 
     private void HandleRoundNe(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1180,8 +1180,8 @@ public class DirectXProgramToUsil
 
     private void HandleRoundZ(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1202,11 +1202,11 @@ public class DirectXProgramToUsil
 
     private void HandleSincos(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest0 = inst.operands[0]; // The address of sin(src0), computed per component.
-        SHDRInstructionOperand dest1 = inst.operands[1]; // The address of cos(src0), computed per component.
-        SHDRInstructionOperand src = inst.operands[2]; // The components for which to compute sin and cos.
+        SHDRInstructionOperand dest0 = inst.operands[0]; 
+        SHDRInstructionOperand dest1 = inst.operands[1]; 
+        SHDRInstructionOperand src = inst.operands[2]; 
 
-        // there is a sincos function in hlsl but we'll just skip that and use individual instructions
+        
 
         if (dest0.operand != Operand.Null)
         {
@@ -1249,9 +1249,9 @@ public class DirectXProgramToUsil
 
     private void HandleIShl(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // Contains the values to be shifted.
-        SHDRInstructionOperand src1 = inst.operands[2]; // Contains the shift amount.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1276,9 +1276,9 @@ public class DirectXProgramToUsil
 
     private void HandleIShr(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // Contains the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // Contains the value to be shifted.
-        SHDRInstructionOperand src1 = inst.operands[2]; // Contains the shift amount.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1303,9 +1303,9 @@ public class DirectXProgramToUsil
 
     private void HandleDp2(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation. dest = src0.r * src1.r + src0.g * src1.g
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1331,9 +1331,9 @@ public class DirectXProgramToUsil
 
     private void HandleDp3(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1359,9 +1359,9 @@ public class DirectXProgramToUsil
 
     private void HandleDp4(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components in the operation.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1387,17 +1387,17 @@ public class DirectXProgramToUsil
 
     private void HandleSample(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // A set of texture coordinates. For more information, see the Remarks section.
-        SHDRInstructionOperand srcResource = inst.operands[2]; // A texture register. For more information, see the Remarks section.
-        SHDRInstructionOperand srcSampler = inst.operands[3]; // A sampler register. For more information, see the Remarks section.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcResource = inst.operands[2]; 
+        SHDRInstructionOperand srcSampler = inst.operands[3]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
         UsilOperand usilSrcAddress = new UsilOperand();
         UsilOperand usilSrcResource = new UsilOperand();
         UsilOperand usilSrcSampler = new UsilOperand();
-        UsilOperand usilSamplerType = new UsilOperand(0); // i.e. unity_ProbeVolumeSH (handled by USILSamplerTypeFixer)
+        UsilOperand usilSamplerType = new UsilOperand(0); 
 
         int[] mask = new int[] { 0, 1, 2, 3 };
 
@@ -1424,11 +1424,11 @@ public class DirectXProgramToUsil
 
     private void HandleSampleC(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // A set of texture coordinates. For more information see the sample instruction.
-        SHDRInstructionOperand srcResource = inst.operands[2]; // A texture register. For more information see the sample instruction.
-        SHDRInstructionOperand srcSampler = inst.operands[3]; // A sampler register. For more information see the sample instruction.
-        SHDRInstructionOperand srcReferenceValue = inst.operands[4]; // A register with a single component selected, which is used in the comparison.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcResource = inst.operands[2]; 
+        SHDRInstructionOperand srcSampler = inst.operands[3]; 
+        SHDRInstructionOperand srcReferenceValue = inst.operands[4]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1436,7 +1436,7 @@ public class DirectXProgramToUsil
         UsilOperand usilSrcResource = new UsilOperand();
         UsilOperand usilSrcSampler = new UsilOperand();
         UsilOperand usilSrcReferenceValue = new UsilOperand();
-        UsilOperand usilSamplerType = new UsilOperand(0); // i.e. unity_ProbeVolumeSH (handled by USILSamplerTypeFixer)
+        UsilOperand usilSamplerType = new UsilOperand(0); 
 
         int[] mask = new int[] { 0, 1, 2, 3 };
 
@@ -1473,11 +1473,11 @@ public class DirectXProgramToUsil
 
     private void HandleSampleL(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // A set of texture coordinates. For more information, see the Remarks section.
-        SHDRInstructionOperand srcResource = inst.operands[2]; // A texture register. For more information, see the Remarks section.
-        SHDRInstructionOperand srcSampler = inst.operands[3]; // A sampler register. For more information, see the Remarks section.
-        SHDRInstructionOperand srcLOD = inst.operands[4]; // The LOD.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcResource = inst.operands[2]; 
+        SHDRInstructionOperand srcSampler = inst.operands[3]; 
+        SHDRInstructionOperand srcLOD = inst.operands[4]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1485,7 +1485,7 @@ public class DirectXProgramToUsil
         UsilOperand usilSrcResource = new UsilOperand();
         UsilOperand usilSrcSampler = new UsilOperand();
         UsilOperand usilSrcLOD = new UsilOperand();
-        UsilOperand usilSamplerType = new UsilOperand(0); // i.e. unity_ProbeVolumeSH (handled by USILSamplerTypeFixer)
+        UsilOperand usilSamplerType = new UsilOperand(0); 
 
         int[] mask = new int[] { 0, 1, 2, 3 };
 
@@ -1522,12 +1522,12 @@ public class DirectXProgramToUsil
 
     private void HandleSampleD(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // A set of texture coordinates. For more information see the sample instruction.
-        SHDRInstructionOperand srcResource = inst.operands[2]; // A texture register. For more information see the sample instruction.
-        SHDRInstructionOperand srcSampler = inst.operands[3]; // A sampler register. For more information see the sample instruction.
-        SHDRInstructionOperand srcXDerivatives = inst.operands[4]; // The derivatives for the source address in the x direction. For more information, see the Remarks section.
-        SHDRInstructionOperand srcYDerivatives = inst.operands[5]; // The derivatives for the source address in the y direction. For more information, see the Remarks section.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcResource = inst.operands[2]; 
+        SHDRInstructionOperand srcSampler = inst.operands[3]; 
+        SHDRInstructionOperand srcXDerivatives = inst.operands[4]; 
+        SHDRInstructionOperand srcYDerivatives = inst.operands[5]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1566,9 +1566,9 @@ public class DirectXProgramToUsil
 
     private void HandleLd(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // The texture coordinates needed to perform the sample.
-        SHDRInstructionOperand srcResource = inst.operands[2]; // A texture register (t#) which must have been declared identifying which Texture or Buffer to fetch from.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcResource = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1603,10 +1603,10 @@ public class DirectXProgramToUsil
 
     private void HandleLdStructured(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand srcAddress = inst.operands[1]; // Specifies the index of the structure to read.
-        SHDRInstructionOperand srcByteOffset = inst.operands[2]; // Specifies the byte offset in the structure to start reading from. 
-        SHDRInstructionOperand src0 = inst.operands[3]; // The buffer to read from. This parameter must be a SRV (t#), UAV (u#). In the compute shader it can also be thread group shared memory (g#). 
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand srcAddress = inst.operands[1]; 
+        SHDRInstructionOperand srcByteOffset = inst.operands[2]; 
+        SHDRInstructionOperand src0 = inst.operands[3]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1643,7 +1643,7 @@ public class DirectXProgramToUsil
 
     private void HandleDiscard(SHDRInstruction inst)
     {
-        SHDRInstructionOperand src0 = inst.operands[0]; // The value that determines whether to discard the current pixel being processed.
+        SHDRInstructionOperand src0 = inst.operands[0]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilSrc0 = new UsilOperand();
@@ -1657,7 +1657,7 @@ public class DirectXProgramToUsil
             usilSrc0
         };
 
-        // if works the same way, so we can pretend the discard is an if
+        
         HandleIf(inst);
         Instructions.Add(usilInst);
         HandleEndIf(inst);
@@ -1665,9 +1665,9 @@ public class DirectXProgramToUsil
 
     private void HandleResInfo(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The mip level.
-        SHDRInstructionOperand src1 = inst.operands[2]; // A t# or u# input texture for which the dimensions are being queried. 
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilResource = new UsilOperand();
@@ -1681,8 +1681,8 @@ public class DirectXProgramToUsil
         bool hasHeight = false;
         bool hasDepth = false;
         bool hasMipCount = false;
-        // resinfo_indexable*** r0.xy, l(0), t0.xwyz ->
-        // r0.xy means two outputs, t0.xw means hasWidth and hasMipCount
+        
+        
         for (int i = 0; i < dest.swizzle.Length; i++)
         {
             int index = src1.swizzle[i];
@@ -1751,8 +1751,8 @@ public class DirectXProgramToUsil
 
     private void HandleSampleInfo(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the results of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The shader resource.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1773,8 +1773,8 @@ public class DirectXProgramToUsil
 
     private void HandleDerivRt(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The component in the operation.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -1804,7 +1804,7 @@ public class DirectXProgramToUsil
 
     private void HandleIf(SHDRInstruction inst)
     {
-        SHDRInstructionOperand src0 = inst.operands[0]; // The value that determines whether to discard the current pixel being processed.
+        SHDRInstructionOperand src0 = inst.operands[0]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilSrc0 = new UsilOperand();
@@ -1911,7 +1911,7 @@ public class DirectXProgramToUsil
             usilSrc0
         };
 
-        // if works the same way, so we can pretend the discard is an if
+        
         HandleIf(inst);
         Instructions.Add(usilInst);
         HandleEndIf(inst);
@@ -1946,7 +1946,7 @@ public class DirectXProgramToUsil
             usilSrc0
         };
 
-        // if works the same way, so we can pretend the discard is an if
+        
         HandleIf(inst);
         Instructions.Add(usilInst);
         HandleEndIf(inst);
@@ -1954,7 +1954,7 @@ public class DirectXProgramToUsil
 
     private void HandleSwitch(SHDRInstruction inst)
     {
-        SHDRInstructionOperand src0 = inst.operands[0]; // The selector for the switch statement.
+        SHDRInstructionOperand src0 = inst.operands[0]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilSrc0 = new UsilOperand();
@@ -2018,9 +2018,9 @@ public class DirectXProgramToUsil
 
     private void HandleEq(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The component to comapre to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The component to comapre to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -2047,9 +2047,9 @@ public class DirectXProgramToUsil
 
     private void HandleNeq(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The components to compare to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The components to compare to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -2076,9 +2076,9 @@ public class DirectXProgramToUsil
 
     private void HandleLt(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The value to compare to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The value to compare to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -2106,9 +2106,9 @@ public class DirectXProgramToUsil
 
     private void HandleGe(SHDRInstruction inst)
     {
-        SHDRInstructionOperand dest = inst.operands[0]; // The address of the result of the operation.
-        SHDRInstructionOperand src0 = inst.operands[1]; // The value to compare to src1.
-        SHDRInstructionOperand src1 = inst.operands[2]; // The value to compare to src0.
+        SHDRInstructionOperand dest = inst.operands[0]; 
+        SHDRInstructionOperand src0 = inst.operands[1]; 
+        SHDRInstructionOperand src1 = inst.operands[2]; 
 
         UsilInstruction usilInst = new UsilInstruction();
         UsilOperand usilDest = new UsilOperand();
@@ -2156,7 +2156,7 @@ public class DirectXProgramToUsil
     private void HandleResource(SHDRInstruction inst)
     {
         ResourceDimension dimension = inst.declData.resourceDimension;
-        int regIndex = inst.declData.operands[0].arraySizes[0]; // todo: not always tX
+        int regIndex = inst.declData.operands[0].arraySizes[0]; 
         _resourceToDimension[regIndex] = dimension;
     }
 
@@ -2180,13 +2180,13 @@ public class DirectXProgramToUsil
         {
             DirectXDisassembler.Type.Vertex => UsilConstants.VERT_OUTPUT_LOCAL_NAME,
             DirectXDisassembler.Type.Pixel => UsilConstants.FRAG_OUTPUT_LOCAL_NAME,
-            _ => "o" // ?
+            _ => "o" 
         };
         string outputStructName = _dxShader.Shdr.shaderType switch
         {
             DirectXDisassembler.Type.Vertex => UsilConstants.VERT_TO_FRAG_STRUCT_NAME,
             DirectXDisassembler.Type.Pixel => UsilConstants.FRAG_OUTPUT_STRUCT_NAME,
-            _ => "o" // ?
+            _ => "o" 
         };
 
         Locals.Add(new UsilLocal(outputStructName, outputName, UsilLocalType.Vector4));
@@ -2208,7 +2208,7 @@ public class DirectXProgramToUsil
             case ResourceDimension.texturecubearray:
                 return GetMaskOfSize(4);
             default:
-                return GetMaskOfSize(2); // not handled yet
+                return GetMaskOfSize(2); 
         }
     }
 
@@ -2228,7 +2228,7 @@ public class DirectXProgramToUsil
             case ResourceDimension.texturecubearray:
                 return GetMaskOfSize(4);
             default:
-                return GetMaskOfSize(2); // not handled yet
+                return GetMaskOfSize(2); 
         }
     }
 
@@ -2249,7 +2249,7 @@ public class DirectXProgramToUsil
             case ResourceDimension.texture3d:
                 return GetMaskOfSize(4);
             default:
-                return GetMaskOfSize(2); // not handled yet
+                return GetMaskOfSize(2); 
         }
     }
 
@@ -2261,7 +2261,7 @@ public class DirectXProgramToUsil
             case ResourceDimension.texture2dmsarray:
                 return GetMaskOfSize(2);
             default:
-                return GetMaskOfSize(2); // not handled yet
+                return GetMaskOfSize(2); 
         }
     }
 
@@ -2280,7 +2280,7 @@ public class DirectXProgramToUsil
             case ResourceDimension.texture3d:
                 return GetMaskOfSize(3);
             default:
-                return GetMaskOfSize(2); // not handled yet
+                return GetMaskOfSize(2); 
         }
     }
 
@@ -2303,8 +2303,8 @@ public class DirectXProgramToUsil
         }
     }
 
-    ///////////////////////
-    // stuff to be moved to other classes
+    
+    
 
     private int ConvertFloatToInt(float f)
     {

@@ -48,7 +48,7 @@ public class UShaderFunctionToHlsl
             { UsilInstructionType.Truncate, new InstHandler(HandleTruncate) },
             { UsilInstructionType.IntToFloat, new InstHandler(HandleIntToFloat) },
             { UsilInstructionType.FloatToInt, new InstHandler(HandleFloatToInt) },
-            // { UsilInstructionType.FloatToUInt, new InstHandler(HandleFloatToInt) },
+            
             { UsilInstructionType.Negate, new InstHandler(HandleNegate) },
             { UsilInstructionType.Clamp, new InstHandler(HandleClamp) },
             { UsilInstructionType.Sine, new InstHandler(HandleSine) },
@@ -96,7 +96,7 @@ public class UShaderFunctionToHlsl
             { UsilInstructionType.GreaterThan, new InstHandler(HandleGreaterThan) },
             { UsilInstructionType.GreaterThanOrEqual, new InstHandler(HandleGreaterThanOrEqual) },
             { UsilInstructionType.Return, new InstHandler(HandleReturn) },
-            // extra
+            
             { UsilInstructionType.MultiplyMatrixByVector, new InstHandler(MultiplyMatrixByVector) },
             { UsilInstructionType.Comment, new InstHandler(HandleComment) }
         };
@@ -177,7 +177,7 @@ public class UShaderFunctionToHlsl
             string args = $"{UsilConstants.VERT_TO_FRAG_STRUCT_NAME} {UsilConstants.FRAG_INPUT_NAME}";
             if (frontFace is not null)
             {
-                // not part of v2f
+                
                 args += $", {frontFace.Format} {frontFace.Name}: VFACE";
             }
             AppendLine($"{UsilConstants.FRAG_OUTPUT_STRUCT_NAME} frag({args})");
@@ -461,7 +461,7 @@ public class UShaderFunctionToHlsl
         UsilOperand srcOp0 = srcOps[0];
         UsilOperand srcOp1 = srcOps[1];
 
-        // temp fix to prevent compile errors, still inaccurate
+        
         int op0IntSize = srcOp0.GetValueCount();
         int op1IntSize = srcOp1.GetValueCount();
 
@@ -496,7 +496,7 @@ public class UShaderFunctionToHlsl
         UsilOperand srcOp0 = srcOps[0];
         UsilOperand srcOp1 = srcOps[1];
 
-        // temp fix to prevent compile errors, still inaccurate
+        
         int op0IntSize = srcOp0.GetValueCount();
         int op1IntSize = srcOp1.GetValueCount();
 
@@ -550,7 +550,7 @@ public class UShaderFunctionToHlsl
                 UsilOperandType.SamplerCube => $"texCUBE({args})",
                 UsilOperandType.Sampler2DArray => $"UNITY_SAMPLE_TEX2DARRAY({args})",
                 UsilOperandType.SamplerCubeArray => $"UNITY_SAMPLE_TEXCUBEARRAY({args})",
-                _ => $"texND({args})" // unknown real type
+                _ => $"texND({args})" 
             };
         }
         else
@@ -563,7 +563,7 @@ public class UShaderFunctionToHlsl
                 UsilOperandType.SamplerCube => $"UNITY_SAMPLE_TEXCUBE_SAMPLER({args})",
                 UsilOperandType.Sampler2DArray => $"UNITY_SAMPLE_TEX2DARRAY_SAMPLER({args})",
                 UsilOperandType.SamplerCubeArray => $"UNITY_SAMPLE_TEXCUBEARRAY_SAMPLER({args})",
-                _ => $"texND({args})" // unknown real type
+                _ => $"texND({args})" 
             };
         }
         string comment = CommentString(inst);
@@ -576,7 +576,7 @@ public class UShaderFunctionToHlsl
         UsilOperand textureOperand = srcOps[2];
         bool samplerType = srcOps[4].ImmInt[0] == 1;
         string args;
-        if (srcOps[0].Mask.Length == 2) // texture2d
+        if (srcOps[0].Mask.Length == 2) 
         {
             args = $"{srcOps[2]}, float4({srcOps[0]}, 0, {srcOps[3]})";
         }
@@ -595,7 +595,7 @@ public class UShaderFunctionToHlsl
                 UsilOperandType.SamplerCube => $"texCUBElod({args})",
                 UsilOperandType.Sampler2DArray => $"UNITY_SAMPLE_TEX2DARRAY_LOD({args})",
                 UsilOperandType.SamplerCubeArray => $"UNITY_SAMPLE_TEXCUBEARRAY_LOD({args})",
-                _ => $"texNDlod({args})" // unknown real type
+                _ => $"texNDlod({args})" 
             };
         }
         else
@@ -608,7 +608,7 @@ public class UShaderFunctionToHlsl
                 UsilOperandType.SamplerCube => $"UNITY_SAMPLE_TEXCUBE_SAMPLER({args})",
                 UsilOperandType.Sampler2DArray => $"UNITY_SAMPLE_TEX2DARRAY_SAMPLER({args})",
                 UsilOperandType.SamplerCubeArray => $"UNITY_SAMPLE_TEXCUBEARRAY_SAMPLER({args})",
-                _ => $"texND({args})" // unknown real type
+                _ => $"texND({args})" 
             };
         }
         string comment = CommentString(inst);
@@ -626,7 +626,7 @@ public class UShaderFunctionToHlsl
             UsilOperandType.Sampler2D => $"tex2Dgrad({args})",
             UsilOperandType.Sampler3D => $"tex3Dgrad({args})",
             UsilOperandType.SamplerCube => $"texCUBEgrad({args})",
-            _ => $"texNDgrad({args})" // unknown real type
+            _ => $"texNDgrad({args})" 
         };
         string comment = CommentString(inst);
         AppendLine($"{comment}{inst.DestOperand} = {value};");
@@ -643,10 +643,10 @@ public class UShaderFunctionToHlsl
 
     private void HandleLoadResourceStructured(UsilInstruction inst)
     {
-        // todo (won't work because struct doesn't exist)
-        // DXDecompiler: ((float4[arraySize])_Buffer.Load(srcAddress))[srcByteOffset / 16];
-        // 3DMigoto: _Buffer[srcAddress].val[srcByteOffset/4]; (with /4 literally part of the output lmao)
-        // yo idk
+        
+        
+        
+        
         List<UsilOperand> srcOps = inst.SrcOperands;
         string value = $"((float4[1]){srcOps[2]}.Load({srcOps[0]}))[{srcOps[1].ImmInt[0] / 16}]";
         string comment = CommentString(inst);
@@ -661,7 +661,7 @@ public class UShaderFunctionToHlsl
 
     private void HandleResourceDimensionInfo(UsilInstruction inst)
     {
-        // assumes resinfo_extra exists
+        
         List<UsilOperand> srcOps = inst.SrcOperands;
 
         UsilOperand usilResource = srcOps[0];
@@ -675,7 +675,7 @@ public class UShaderFunctionToHlsl
 
         if (usilMipLevel.ImmFloat[0] == 0 && usilMipCount.OperandType == UsilOperandType.Null)
         {
-            // shorter version (not checking the compiler did this correctly!)
+            
             args.Add(usilWidth.ToString());
 
             if (usilHeight.OperandType != UsilOperandType.Null)
@@ -777,8 +777,8 @@ public class UShaderFunctionToHlsl
 
     private void HandleLoop(UsilInstruction inst)
     {
-        // this can create bad optos and should be
-        // replaced with USILXXXLoopOptimizer if possible.
+        
+        
         string comment = CommentString(inst);
         AppendLine($"{comment}while (true) {{");
         _indentLevel++;
@@ -811,7 +811,7 @@ public class UShaderFunctionToHlsl
         UsilOperand compOp = inst.SrcOperands[1];
         UsilInstructionType compType = (UsilInstructionType)inst.SrcOperands[2].ImmInt[0];
         UsilNumberType numberType = (UsilNumberType)inst.SrcOperands[3].ImmInt[0];
-        float addCount = inst.SrcOperands[4].ImmFloat[0]; // todo use an int instead of float when int incremented?
+        float addCount = inst.SrcOperands[4].ImmFloat[0]; 
         int depth = inst.SrcOperands[5].ImmInt[0];
 
         string numberTypeName = numberType switch
@@ -929,7 +929,7 @@ public class UShaderFunctionToHlsl
         {
             UShaderFunctionType.Vertex => UsilConstants.VERT_OUTPUT_LOCAL_NAME,
             UShaderFunctionType.Fragment => UsilConstants.FRAG_OUTPUT_LOCAL_NAME,
-            _ => "o" // ?
+            _ => "o" 
         };
 
         string value = $"return {outputName}";
@@ -971,7 +971,7 @@ public class UShaderFunctionToHlsl
         _stringBuilder.AppendLine(line);
     }
 
-    // this is awful
+    
     private string CommentString(UsilInstruction inst)
     {
         return inst.Commented ? "//" : "";

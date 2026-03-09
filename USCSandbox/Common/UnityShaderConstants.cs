@@ -1,7 +1,7 @@
 ﻿namespace USCSandbox.Common;
 public static class UnityShaderConstants
 {
-    // TODO: there are more, but they aren't included by default
+    
     public static readonly HashSet<string> BUILTIN_TEXTURE_NAMES = new()
     {
         "unity_Lightmap",
@@ -15,7 +15,7 @@ public static class UnityShaderConstants
         "unity_ProbeVolumeSH"
     };
 
-    // TODO: same here
+    
     public static readonly HashSet<string> BUILTIN_CBUFFER_NAMES = new()
     {
         "UnityPerCamera",
@@ -35,8 +35,8 @@ public static class UnityShaderConstants
         "UnityProbeVolume"
     };
 
-    // these start showing up in $Globals in later versions (2020+?)
-    // there's a lot so obviously incomplete
+    
+    
     public static readonly HashSet<string> INCLUDED_UNITY_PROP_NAMES = new()
     {
         "unity_ObjectToWorld",
@@ -60,7 +60,7 @@ public static class UnityShaderConstants
         "_PPLAmbient"
     };
 
-    // not in cgincludes but needed
+    
     public static readonly HashSet<string> NONINCLUDED_UNITY_PROP_NAMES = new()
     {
         "unity_LightData"

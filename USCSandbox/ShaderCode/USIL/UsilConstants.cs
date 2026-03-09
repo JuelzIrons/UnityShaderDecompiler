@@ -1,5 +1,5 @@
 ﻿namespace USCSandbox.ShaderCode.USIL;
-// Should be renamed UConstants probably?
+
 public static class UsilConstants
 {
     public static readonly int[] XYZW_MASK = new int[] { 0, 1, 2, 3 };
@@ -20,7 +20,7 @@ public static class UsilConstants
 
     public static readonly char[] ITER_CHARS = new char[] { 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u' };
 
-    // should be functions
+    
     public const string VERT_INPUT_NAME = "v";
     public const string VERT_OUTPUT_LOCAL_NAME = "o";
     public const string VERT_TO_FRAG_STRUCT_NAME = "v2f";
