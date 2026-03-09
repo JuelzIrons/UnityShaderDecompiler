@@ -15,6 +15,7 @@ Supported shader backends:
 - **Vulkan (SPIR-V)** - Primary target, reason I forked this.
 - **DirectX (DXBC/DXIL)** - decently well supported
 - **OpenGL ES 3 (GLES3)** - supported
+- **Metal** - work in progress, not fully functional
 - **Switch NVN** - work in progress, not fully functional
 
 ## How to use
