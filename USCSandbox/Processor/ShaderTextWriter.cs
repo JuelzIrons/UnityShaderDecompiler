@@ -324,16 +324,18 @@ public class ShaderTextWriter
 
         WritePassStencil(state);
         var fogMode = state.FogMode;
-        var fogColorX = state.FogColor.X.Value;
-        var fogColorY = state.FogColor.Y.Value;
-        var fogColorZ = state.FogColor.Z.Value;
-        var fogColorW = state.FogColor.W.Value;
-        var fogDensity = state.FogDensity.Value;
-        var fogStart = state.FogStart.Value;
-        var fogEnd = state.FogEnd.Value;
+        var fogColor = state.FogColor;
+        var fogDensity = state.FogDensity;
+        var fogStart = state.FogStart;
+        var fogEnd = state.FogEnd;
 
-        if (fogMode != FogMode.Unknown || fogDensity != 0.0 || fogStart != 0.0 || fogEnd != 0.0
-            || !(fogColorX == 0.0 && fogColorY == 0.0 && fogColorZ == 0.0 && fogColorW == 0.0))
+        bool hasFogColorRef = fogColor.X.IsPropertyRef || fogColor.Y.IsPropertyRef || fogColor.Z.IsPropertyRef || fogColor.W.IsPropertyRef;
+        bool hasFogColorValue = fogColor.X.Value != 0.0 || fogColor.Y.Value != 0.0 || fogColor.Z.Value != 0.0 || fogColor.W.Value != 0.0;
+
+        if (fogMode != FogMode.Unknown || fogDensity.IsPropertyRef || fogDensity.Value != 0.0
+            || fogStart.IsPropertyRef || fogStart.Value != 0.0
+            || fogEnd.IsPropertyRef || fogEnd.Value != 0.0
+            || hasFogColorRef || hasFogColorValue)
         {
             _sb.AppendLine("Fog {");
             _sb.Indent();
@@ -341,21 +343,17 @@ public class ShaderTextWriter
             {
                 _sb.AppendLine($"Mode {fogMode}");
             }
-            if (fogColorX != 0.0 || fogColorY != 0.0 || fogColorZ != 0.0 || fogColorW != 0.0)
+            if (hasFogColorRef || hasFogColorValue)
             {
-                _sb.AppendLine($"Color ({fogColorX.ToString(CultureInfo.InvariantCulture)}," +
-                               $"{fogColorY.ToString(CultureInfo.InvariantCulture)}," +
-                               $"{fogColorZ.ToString(CultureInfo.InvariantCulture)}," +
-                               $"{fogColorW.ToString(CultureInfo.InvariantCulture)})");
+                _sb.AppendLine($"Color ({fogColor.X.ToShaderLab()},{fogColor.Y.ToShaderLab()},{fogColor.Z.ToShaderLab()},{fogColor.W.ToShaderLab()})");
             }
-            if (fogDensity != 0.0)
+            if (fogDensity.IsPropertyRef || fogDensity.Value != 0.0)
             {
-                _sb.AppendLine($"Density {fogDensity.ToString(CultureInfo.InvariantCulture)}");
+                _sb.AppendLine($"Density {fogDensity.ToShaderLab()}");
             }
-            if (fogStart != 0.0 || fogEnd != 0.0)
+            if (fogStart.IsPropertyRef || fogStart.Value != 0.0 || fogEnd.IsPropertyRef || fogEnd.Value != 0.0)
             {
-                _sb.AppendLine($"Range {fogStart.ToString(CultureInfo.InvariantCulture)}, " +
-                               $"{fogEnd.ToString(CultureInfo.InvariantCulture)}");
+                _sb.AppendLine($"Range {fogStart.ToShaderLab()}, {fogEnd.ToShaderLab()}");
             }
             _sb.Unindent();
             _sb.AppendLine("}");
