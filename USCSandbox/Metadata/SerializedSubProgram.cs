@@ -30,16 +30,7 @@ public class SerializedSubProgram
             
             Params = new SerializedProgramParameters(field["m_Parameters"], nameTable);
         }
-        else
-        {
-            
-            
-            if (ParameterBlobIndex == uint.MaxValue)
-            {
-                throw new NotSupportedException(
-                    "Either a ParameterBlobIndex has to be set or there " +
-                    "have to be params. Somehow we have neither.");
-            }
-        }
+        // else: no inline params and no parameter blob index — params are in the binary blob data
+        // (ShaderSubProgramData.ShaderParams), which converters handle via UsesParameterBlob = false
     }
 }
